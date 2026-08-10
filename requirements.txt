@@ -1,0 +1,7 @@
+pandas>=2.2
+numpy>=1.26
+pyyaml>=6.0
+
+# Optional - only if workstream A wants an in-process SQL engine for the
+# semantic layer. Not required by the generator or the eval harness.
+# duckdb>=1.0

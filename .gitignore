@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+.DS_Store
+.ipynb_checkpoints/
+*.egg-info/
+.pytest_cache/
+# generated outputs - regenerate with `make data`
+data/raw/*.csv
+!data/raw/.gitkeep
+out/
+runs/

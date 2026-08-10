@@ -1,0 +1,5 @@
+# Coordinator reviews scope and data contracts; everything else is peer-reviewed.
+/SCOPE.md            @rajupeta
+/data/               @rajupeta
+/eval/               @rajupeta
+/docs/DECISIONS.md   @rajupeta
