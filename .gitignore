@@ -1,0 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+env/
+venv/
+ENV/
+
+# macOS files
+.DS_Store
+
+# PyInstaller / Build artifacts
+dist/
+build/
+*.spec
+
+# PyWebView / Streamlit temporary caches
+.streamlit/secrets.toml
+
+# IDE & Editor settings
+.vscode/
+.idea/

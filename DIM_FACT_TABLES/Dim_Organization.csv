@@ -1,0 +1,21 @@
+Organization_ID,Business_Unit,Division,Department,Cost_Center,Profit_Center,Sales_Org,Region_ID,Region,Country
+ORG001,BU1,Division 1,Department 1,CC0001,PC001,SO01,R01,Midwest,USA
+ORG002,BU2,Division 2,Department 2,CC0002,PC002,SO02,R02,Northeast,USA
+ORG003,BU3,Division 3,Department 3,CC0003,PC003,SO03,R03,South,USA
+ORG004,BU4,Division 4,Department 4,CC0004,PC004,SO04,R04,West,USA
+ORG005,BU1,Division 5,Department 5,CC0005,PC005,SO05,R01,Midwest,USA
+ORG006,BU2,Division 1,Department 6,CC0006,PC006,SO01,R02,Northeast,USA
+ORG007,BU3,Division 2,Department 7,CC0007,PC007,SO02,R03,South,USA
+ORG008,BU4,Division 3,Department 8,CC0008,PC008,SO03,R04,West,USA
+ORG009,BU1,Division 4,Department 1,CC0009,PC009,SO04,R01,Midwest,USA
+ORG010,BU2,Division 5,Department 2,CC0010,PC010,SO05,R02,Northeast,USA
+ORG011,BU3,Division 1,Department 3,CC0011,PC001,SO01,R03,South,USA
+ORG012,BU4,Division 2,Department 4,CC0012,PC002,SO02,R04,West,USA
+ORG013,BU1,Division 3,Department 5,CC0013,PC003,SO03,R01,Midwest,USA
+ORG014,BU2,Division 4,Department 6,CC0014,PC004,SO04,R02,Northeast,USA
+ORG015,BU3,Division 5,Department 7,CC0015,PC005,SO05,R03,South,USA
+ORG016,BU4,Division 1,Department 8,CC0016,PC006,SO01,R04,West,USA
+ORG017,BU1,Division 2,Department 1,CC0017,PC007,SO02,R01,Midwest,USA
+ORG018,BU2,Division 3,Department 2,CC0018,PC008,SO03,R02,Northeast,USA
+ORG019,BU3,Division 4,Department 3,CC0019,PC009,SO04,R03,South,USA
+ORG020,BU4,Division 5,Department 4,CC0020,PC010,SO05,R04,West,USA

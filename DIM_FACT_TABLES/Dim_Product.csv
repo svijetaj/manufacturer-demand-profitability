@@ -1,0 +1,151 @@
+Product_ID,Product_Code,Product_Name,Product_Category,Product_Subcategory,Brand,SKU,Product_Line,Launch_Date,Discontinued_Flag
+P0001,PRD-0001,Paper Plates Product 1,Paper Plates,Standard,EcoServe,SKU-10001,Line 1,2021-01-10,N
+P0002,PRD-0002,Paper Cups Product 2,Paper Cups,Premium,GreenChoice,SKU-10002,Line 2,2021-01-19,N
+P0003,PRD-0003,Bowls Product 3,Bowls,Heavy Duty,PurePack,SKU-10003,Line 3,2021-01-28,N
+P0004,PRD-0004,Food Containers Product 4,Food Containers,Standard,EarthWare,SKU-10004,Line 4,2021-02-06,N
+P0005,PRD-0005,Paper Plates Product 5,Paper Plates,Premium,EcoServe,SKU-10005,Line 5,2021-02-15,N
+P0006,PRD-0006,Paper Cups Product 6,Paper Cups,Heavy Duty,GreenChoice,SKU-10006,Line 6,2021-02-24,N
+P0007,PRD-0007,Bowls Product 7,Bowls,Standard,PurePack,SKU-10007,Line 1,2021-03-05,N
+P0008,PRD-0008,Food Containers Product 8,Food Containers,Premium,EarthWare,SKU-10008,Line 2,2021-03-14,N
+P0009,PRD-0009,Paper Plates Product 9,Paper Plates,Heavy Duty,EcoServe,SKU-10009,Line 3,2021-03-23,N
+P0010,PRD-0010,Paper Cups Product 10,Paper Cups,Standard,GreenChoice,SKU-10010,Line 4,2021-04-01,N
+P0011,PRD-0011,Bowls Product 11,Bowls,Premium,PurePack,SKU-10011,Line 5,2021-04-10,N
+P0012,PRD-0012,Food Containers Product 12,Food Containers,Heavy Duty,EarthWare,SKU-10012,Line 6,2021-04-19,N
+P0013,PRD-0013,Paper Plates Product 13,Paper Plates,Standard,EcoServe,SKU-10013,Line 1,2021-04-28,N
+P0014,PRD-0014,Paper Cups Product 14,Paper Cups,Premium,GreenChoice,SKU-10014,Line 2,2021-05-07,N
+P0015,PRD-0015,Bowls Product 15,Bowls,Heavy Duty,PurePack,SKU-10015,Line 3,2021-05-16,N
+P0016,PRD-0016,Food Containers Product 16,Food Containers,Standard,EarthWare,SKU-10016,Line 4,2021-05-25,N
+P0017,PRD-0017,Paper Plates Product 17,Paper Plates,Premium,EcoServe,SKU-10017,Line 5,2021-06-03,N
+P0018,PRD-0018,Paper Cups Product 18,Paper Cups,Heavy Duty,GreenChoice,SKU-10018,Line 6,2021-06-12,N
+P0019,PRD-0019,Bowls Product 19,Bowls,Standard,PurePack,SKU-10019,Line 1,2021-06-21,N
+P0020,PRD-0020,Food Containers Product 20,Food Containers,Premium,EarthWare,SKU-10020,Line 2,2021-06-30,N
+P0021,PRD-0021,Paper Plates Product 21,Paper Plates,Heavy Duty,EcoServe,SKU-10021,Line 3,2021-07-09,N
+P0022,PRD-0022,Paper Cups Product 22,Paper Cups,Standard,GreenChoice,SKU-10022,Line 4,2021-07-18,N
+P0023,PRD-0023,Bowls Product 23,Bowls,Premium,PurePack,SKU-10023,Line 5,2021-07-27,N
+P0024,PRD-0024,Food Containers Product 24,Food Containers,Heavy Duty,EarthWare,SKU-10024,Line 6,2021-08-05,N
+P0025,PRD-0025,Paper Plates Product 25,Paper Plates,Standard,EcoServe,SKU-10025,Line 1,2021-08-14,N
+P0026,PRD-0026,Paper Cups Product 26,Paper Cups,Premium,GreenChoice,SKU-10026,Line 2,2021-08-23,N
+P0027,PRD-0027,Bowls Product 27,Bowls,Heavy Duty,PurePack,SKU-10027,Line 3,2021-09-01,N
+P0028,PRD-0028,Food Containers Product 28,Food Containers,Standard,EarthWare,SKU-10028,Line 4,2021-09-10,N
+P0029,PRD-0029,Paper Plates Product 29,Paper Plates,Premium,EcoServe,SKU-10029,Line 5,2021-09-19,N
+P0030,PRD-0030,Paper Cups Product 30,Paper Cups,Heavy Duty,GreenChoice,SKU-10030,Line 6,2021-09-28,N
+P0031,PRD-0031,Bowls Product 31,Bowls,Standard,PurePack,SKU-10031,Line 1,2021-10-07,N
+P0032,PRD-0032,Food Containers Product 32,Food Containers,Premium,EarthWare,SKU-10032,Line 2,2021-10-16,N
+P0033,PRD-0033,Paper Plates Product 33,Paper Plates,Heavy Duty,EcoServe,SKU-10033,Line 3,2021-10-25,N
+P0034,PRD-0034,Paper Cups Product 34,Paper Cups,Standard,GreenChoice,SKU-10034,Line 4,2021-11-03,N
+P0035,PRD-0035,Bowls Product 35,Bowls,Premium,PurePack,SKU-10035,Line 5,2021-11-12,N
+P0036,PRD-0036,Food Containers Product 36,Food Containers,Heavy Duty,EarthWare,SKU-10036,Line 6,2021-11-21,N
+P0037,PRD-0037,Paper Plates Product 37,Paper Plates,Standard,EcoServe,SKU-10037,Line 1,2021-11-30,Y
+P0038,PRD-0038,Paper Cups Product 38,Paper Cups,Premium,GreenChoice,SKU-10038,Line 2,2021-12-09,N
+P0039,PRD-0039,Bowls Product 39,Bowls,Heavy Duty,PurePack,SKU-10039,Line 3,2021-12-18,N
+P0040,PRD-0040,Food Containers Product 40,Food Containers,Standard,EarthWare,SKU-10040,Line 4,2021-12-27,N
+P0041,PRD-0041,Paper Plates Product 41,Paper Plates,Premium,EcoServe,SKU-10041,Line 5,2022-01-05,N
+P0042,PRD-0042,Paper Cups Product 42,Paper Cups,Heavy Duty,GreenChoice,SKU-10042,Line 6,2022-01-14,N
+P0043,PRD-0043,Bowls Product 43,Bowls,Standard,PurePack,SKU-10043,Line 1,2022-01-23,N
+P0044,PRD-0044,Food Containers Product 44,Food Containers,Premium,EarthWare,SKU-10044,Line 2,2022-02-01,N
+P0045,PRD-0045,Paper Plates Product 45,Paper Plates,Heavy Duty,EcoServe,SKU-10045,Line 3,2022-02-10,N
+P0046,PRD-0046,Paper Cups Product 46,Paper Cups,Standard,GreenChoice,SKU-10046,Line 4,2022-02-19,N
+P0047,PRD-0047,Bowls Product 47,Bowls,Premium,PurePack,SKU-10047,Line 5,2022-02-28,N
+P0048,PRD-0048,Food Containers Product 48,Food Containers,Heavy Duty,EarthWare,SKU-10048,Line 6,2022-03-09,N
+P0049,PRD-0049,Paper Plates Product 49,Paper Plates,Standard,EcoServe,SKU-10049,Line 1,2022-03-18,N
+P0050,PRD-0050,Paper Cups Product 50,Paper Cups,Premium,GreenChoice,SKU-10050,Line 2,2022-03-27,N
+P0051,PRD-0051,Bowls Product 51,Bowls,Heavy Duty,PurePack,SKU-10051,Line 3,2022-04-05,N
+P0052,PRD-0052,Food Containers Product 52,Food Containers,Standard,EarthWare,SKU-10052,Line 4,2022-04-14,N
+P0053,PRD-0053,Paper Plates Product 53,Paper Plates,Premium,EcoServe,SKU-10053,Line 5,2022-04-23,N
+P0054,PRD-0054,Paper Cups Product 54,Paper Cups,Heavy Duty,GreenChoice,SKU-10054,Line 6,2022-05-02,N
+P0055,PRD-0055,Bowls Product 55,Bowls,Standard,PurePack,SKU-10055,Line 1,2022-05-11,N
+P0056,PRD-0056,Food Containers Product 56,Food Containers,Premium,EarthWare,SKU-10056,Line 2,2022-05-20,N
+P0057,PRD-0057,Paper Plates Product 57,Paper Plates,Heavy Duty,EcoServe,SKU-10057,Line 3,2022-05-29,N
+P0058,PRD-0058,Paper Cups Product 58,Paper Cups,Standard,GreenChoice,SKU-10058,Line 4,2022-06-07,N
+P0059,PRD-0059,Bowls Product 59,Bowls,Premium,PurePack,SKU-10059,Line 5,2022-06-16,N
+P0060,PRD-0060,Food Containers Product 60,Food Containers,Heavy Duty,EarthWare,SKU-10060,Line 6,2022-06-25,N
+P0061,PRD-0061,Paper Plates Product 61,Paper Plates,Standard,EcoServe,SKU-10061,Line 1,2022-07-04,N
+P0062,PRD-0062,Paper Cups Product 62,Paper Cups,Premium,GreenChoice,SKU-10062,Line 2,2022-07-13,N
+P0063,PRD-0063,Bowls Product 63,Bowls,Heavy Duty,PurePack,SKU-10063,Line 3,2022-07-22,N
+P0064,PRD-0064,Food Containers Product 64,Food Containers,Standard,EarthWare,SKU-10064,Line 4,2022-07-31,N
+P0065,PRD-0065,Paper Plates Product 65,Paper Plates,Premium,EcoServe,SKU-10065,Line 5,2022-08-09,N
+P0066,PRD-0066,Paper Cups Product 66,Paper Cups,Heavy Duty,GreenChoice,SKU-10066,Line 6,2022-08-18,N
+P0067,PRD-0067,Bowls Product 67,Bowls,Standard,PurePack,SKU-10067,Line 1,2022-08-27,N
+P0068,PRD-0068,Food Containers Product 68,Food Containers,Premium,EarthWare,SKU-10068,Line 2,2022-09-05,N
+P0069,PRD-0069,Paper Plates Product 69,Paper Plates,Heavy Duty,EcoServe,SKU-10069,Line 3,2022-09-14,N
+P0070,PRD-0070,Paper Cups Product 70,Paper Cups,Standard,GreenChoice,SKU-10070,Line 4,2022-09-23,N
+P0071,PRD-0071,Bowls Product 71,Bowls,Premium,PurePack,SKU-10071,Line 5,2022-10-02,N
+P0072,PRD-0072,Food Containers Product 72,Food Containers,Heavy Duty,EarthWare,SKU-10072,Line 6,2022-10-11,N
+P0073,PRD-0073,Paper Plates Product 73,Paper Plates,Standard,EcoServe,SKU-10073,Line 1,2022-10-20,N
+P0074,PRD-0074,Paper Cups Product 74,Paper Cups,Premium,GreenChoice,SKU-10074,Line 2,2022-10-29,Y
+P0075,PRD-0075,Bowls Product 75,Bowls,Heavy Duty,PurePack,SKU-10075,Line 3,2022-11-07,N
+P0076,PRD-0076,Food Containers Product 76,Food Containers,Standard,EarthWare,SKU-10076,Line 4,2022-11-16,N
+P0077,PRD-0077,Paper Plates Product 77,Paper Plates,Premium,EcoServe,SKU-10077,Line 5,2022-11-25,N
+P0078,PRD-0078,Paper Cups Product 78,Paper Cups,Heavy Duty,GreenChoice,SKU-10078,Line 6,2022-12-04,N
+P0079,PRD-0079,Bowls Product 79,Bowls,Standard,PurePack,SKU-10079,Line 1,2022-12-13,N
+P0080,PRD-0080,Food Containers Product 80,Food Containers,Premium,EarthWare,SKU-10080,Line 2,2022-12-22,N
+P0081,PRD-0081,Paper Plates Product 81,Paper Plates,Heavy Duty,EcoServe,SKU-10081,Line 3,2022-12-31,N
+P0082,PRD-0082,Paper Cups Product 82,Paper Cups,Standard,GreenChoice,SKU-10082,Line 4,2023-01-09,N
+P0083,PRD-0083,Bowls Product 83,Bowls,Premium,PurePack,SKU-10083,Line 5,2023-01-18,N
+P0084,PRD-0084,Food Containers Product 84,Food Containers,Heavy Duty,EarthWare,SKU-10084,Line 6,2023-01-27,N
+P0085,PRD-0085,Paper Plates Product 85,Paper Plates,Standard,EcoServe,SKU-10085,Line 1,2023-02-05,N
+P0086,PRD-0086,Paper Cups Product 86,Paper Cups,Premium,GreenChoice,SKU-10086,Line 2,2023-02-14,N
+P0087,PRD-0087,Bowls Product 87,Bowls,Heavy Duty,PurePack,SKU-10087,Line 3,2023-02-23,N
+P0088,PRD-0088,Food Containers Product 88,Food Containers,Standard,EarthWare,SKU-10088,Line 4,2023-03-04,N
+P0089,PRD-0089,Paper Plates Product 89,Paper Plates,Premium,EcoServe,SKU-10089,Line 5,2023-03-13,N
+P0090,PRD-0090,Paper Cups Product 90,Paper Cups,Heavy Duty,GreenChoice,SKU-10090,Line 6,2023-03-22,N
+P0091,PRD-0091,Bowls Product 91,Bowls,Standard,PurePack,SKU-10091,Line 1,2023-03-31,N
+P0092,PRD-0092,Food Containers Product 92,Food Containers,Premium,EarthWare,SKU-10092,Line 2,2023-04-09,N
+P0093,PRD-0093,Paper Plates Product 93,Paper Plates,Heavy Duty,EcoServe,SKU-10093,Line 3,2023-04-18,N
+P0094,PRD-0094,Paper Cups Product 94,Paper Cups,Standard,GreenChoice,SKU-10094,Line 4,2023-04-27,N
+P0095,PRD-0095,Bowls Product 95,Bowls,Premium,PurePack,SKU-10095,Line 5,2023-05-06,N
+P0096,PRD-0096,Food Containers Product 96,Food Containers,Heavy Duty,EarthWare,SKU-10096,Line 6,2023-05-15,N
+P0097,PRD-0097,Paper Plates Product 97,Paper Plates,Standard,EcoServe,SKU-10097,Line 1,2023-05-24,N
+P0098,PRD-0098,Paper Cups Product 98,Paper Cups,Premium,GreenChoice,SKU-10098,Line 2,2023-06-02,N
+P0099,PRD-0099,Bowls Product 99,Bowls,Heavy Duty,PurePack,SKU-10099,Line 3,2023-06-11,N
+P0100,PRD-0100,Food Containers Product 100,Food Containers,Standard,EarthWare,SKU-10100,Line 4,2023-06-20,N
+P0101,PRD-0101,Paper Plates Product 101,Paper Plates,Premium,EcoServe,SKU-10101,Line 5,2023-06-29,N
+P0102,PRD-0102,Paper Cups Product 102,Paper Cups,Heavy Duty,GreenChoice,SKU-10102,Line 6,2023-07-08,N
+P0103,PRD-0103,Bowls Product 103,Bowls,Standard,PurePack,SKU-10103,Line 1,2023-07-17,N
+P0104,PRD-0104,Food Containers Product 104,Food Containers,Premium,EarthWare,SKU-10104,Line 2,2023-07-26,N
+P0105,PRD-0105,Paper Plates Product 105,Paper Plates,Heavy Duty,EcoServe,SKU-10105,Line 3,2023-08-04,N
+P0106,PRD-0106,Paper Cups Product 106,Paper Cups,Standard,GreenChoice,SKU-10106,Line 4,2023-08-13,N
+P0107,PRD-0107,Bowls Product 107,Bowls,Premium,PurePack,SKU-10107,Line 5,2023-08-22,N
+P0108,PRD-0108,Food Containers Product 108,Food Containers,Heavy Duty,EarthWare,SKU-10108,Line 6,2023-08-31,N
+P0109,PRD-0109,Paper Plates Product 109,Paper Plates,Standard,EcoServe,SKU-10109,Line 1,2023-09-09,N
+P0110,PRD-0110,Paper Cups Product 110,Paper Cups,Premium,GreenChoice,SKU-10110,Line 2,2023-09-18,N
+P0111,PRD-0111,Bowls Product 111,Bowls,Heavy Duty,PurePack,SKU-10111,Line 3,2023-09-27,Y
+P0112,PRD-0112,Food Containers Product 112,Food Containers,Standard,EarthWare,SKU-10112,Line 4,2023-10-06,N
+P0113,PRD-0113,Paper Plates Product 113,Paper Plates,Premium,EcoServe,SKU-10113,Line 5,2023-10-15,N
+P0114,PRD-0114,Paper Cups Product 114,Paper Cups,Heavy Duty,GreenChoice,SKU-10114,Line 6,2023-10-24,N
+P0115,PRD-0115,Bowls Product 115,Bowls,Standard,PurePack,SKU-10115,Line 1,2023-11-02,N
+P0116,PRD-0116,Food Containers Product 116,Food Containers,Premium,EarthWare,SKU-10116,Line 2,2023-11-11,N
+P0117,PRD-0117,Paper Plates Product 117,Paper Plates,Heavy Duty,EcoServe,SKU-10117,Line 3,2023-11-20,N
+P0118,PRD-0118,Paper Cups Product 118,Paper Cups,Standard,GreenChoice,SKU-10118,Line 4,2023-11-29,N
+P0119,PRD-0119,Bowls Product 119,Bowls,Premium,PurePack,SKU-10119,Line 5,2023-12-08,N
+P0120,PRD-0120,Food Containers Product 120,Food Containers,Heavy Duty,EarthWare,SKU-10120,Line 6,2023-12-17,N
+P0121,PRD-0121,Paper Plates Product 121,Paper Plates,Standard,EcoServe,SKU-10121,Line 1,2023-12-26,N
+P0122,PRD-0122,Paper Cups Product 122,Paper Cups,Premium,GreenChoice,SKU-10122,Line 2,2024-01-04,N
+P0123,PRD-0123,Bowls Product 123,Bowls,Heavy Duty,PurePack,SKU-10123,Line 3,2024-01-13,N
+P0124,PRD-0124,Food Containers Product 124,Food Containers,Standard,EarthWare,SKU-10124,Line 4,2024-01-22,N
+P0125,PRD-0125,Paper Plates Product 125,Paper Plates,Premium,EcoServe,SKU-10125,Line 5,2024-01-31,N
+P0126,PRD-0126,Paper Cups Product 126,Paper Cups,Heavy Duty,GreenChoice,SKU-10126,Line 6,2024-02-09,N
+P0127,PRD-0127,Bowls Product 127,Bowls,Standard,PurePack,SKU-10127,Line 1,2024-02-18,N
+P0128,PRD-0128,Food Containers Product 128,Food Containers,Premium,EarthWare,SKU-10128,Line 2,2024-02-27,N
+P0129,PRD-0129,Paper Plates Product 129,Paper Plates,Heavy Duty,EcoServe,SKU-10129,Line 3,2024-03-07,N
+P0130,PRD-0130,Paper Cups Product 130,Paper Cups,Standard,GreenChoice,SKU-10130,Line 4,2024-03-16,N
+P0131,PRD-0131,Bowls Product 131,Bowls,Premium,PurePack,SKU-10131,Line 5,2024-03-25,N
+P0132,PRD-0132,Food Containers Product 132,Food Containers,Heavy Duty,EarthWare,SKU-10132,Line 6,2024-04-03,N
+P0133,PRD-0133,Paper Plates Product 133,Paper Plates,Standard,EcoServe,SKU-10133,Line 1,2024-04-12,N
+P0134,PRD-0134,Paper Cups Product 134,Paper Cups,Premium,GreenChoice,SKU-10134,Line 2,2021-01-07,N
+P0135,PRD-0135,Bowls Product 135,Bowls,Heavy Duty,PurePack,SKU-10135,Line 3,2021-01-16,N
+P0136,PRD-0136,Food Containers Product 136,Food Containers,Standard,EarthWare,SKU-10136,Line 4,2021-01-25,N
+P0137,PRD-0137,Paper Plates Product 137,Paper Plates,Premium,EcoServe,SKU-10137,Line 5,2021-02-03,N
+P0138,PRD-0138,Paper Cups Product 138,Paper Cups,Heavy Duty,GreenChoice,SKU-10138,Line 6,2021-02-12,N
+P0139,PRD-0139,Bowls Product 139,Bowls,Standard,PurePack,SKU-10139,Line 1,2021-02-21,N
+P0140,PRD-0140,Food Containers Product 140,Food Containers,Premium,EarthWare,SKU-10140,Line 2,2021-03-02,N
+P0141,PRD-0141,Paper Plates Product 141,Paper Plates,Heavy Duty,EcoServe,SKU-10141,Line 3,2021-03-11,N
+P0142,PRD-0142,Paper Cups Product 142,Paper Cups,Standard,GreenChoice,SKU-10142,Line 4,2021-03-20,N
+P0143,PRD-0143,Bowls Product 143,Bowls,Premium,PurePack,SKU-10143,Line 5,2021-03-29,N
+P0144,PRD-0144,Food Containers Product 144,Food Containers,Heavy Duty,EarthWare,SKU-10144,Line 6,2021-04-07,N
+P0145,PRD-0145,Paper Plates Product 145,Paper Plates,Standard,EcoServe,SKU-10145,Line 1,2021-04-16,N
+P0146,PRD-0146,Paper Cups Product 146,Paper Cups,Premium,GreenChoice,SKU-10146,Line 2,2021-04-25,N
+P0147,PRD-0147,Bowls Product 147,Bowls,Heavy Duty,PurePack,SKU-10147,Line 3,2021-05-04,N
+P0148,PRD-0148,Food Containers Product 148,Food Containers,Standard,EarthWare,SKU-10148,Line 4,2021-05-13,Y
+P0149,PRD-0149,Paper Plates Product 149,Paper Plates,Premium,EcoServe,SKU-10149,Line 5,2021-05-22,N
+P0150,PRD-0150,Paper Cups Product 150,Paper Cups,Heavy Duty,GreenChoice,SKU-10150,Line 6,2021-05-31,N

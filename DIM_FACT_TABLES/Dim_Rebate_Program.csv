@@ -1,0 +1,13 @@
+Rebate_Program_ID,Rebate_Program_Name,Rebate_Type,Start_Date,End_Date,Status
+RP001,Rebate Program 1,Volume,2025-01-01,2026-12-31,Active
+RP002,Rebate Program 2,Growth,2025-01-01,2026-12-31,Active
+RP003,Rebate Program 3,Promotional,2025-01-01,2026-12-31,Active
+RP004,Rebate Program 4,Volume,2025-01-01,2026-12-31,Active
+RP005,Rebate Program 5,Growth,2025-01-01,2026-12-31,Active
+RP006,Rebate Program 6,Promotional,2025-01-01,2026-12-31,Active
+RP007,Rebate Program 7,Volume,2025-01-01,2026-12-31,Active
+RP008,Rebate Program 8,Growth,2025-01-01,2026-12-31,Active
+RP009,Rebate Program 9,Promotional,2025-01-01,2026-12-31,Active
+RP010,Rebate Program 10,Volume,2025-01-01,2026-12-31,Active
+RP011,Rebate Program 11,Growth,2025-01-01,2026-12-31,Active
+RP012,Rebate Program 12,Promotional,2025-01-01,2026-12-31,Active
