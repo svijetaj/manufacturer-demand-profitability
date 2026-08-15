@@ -1,62 +1,97 @@
-# Meridian Corp — Finance & Analytics Task Force
+# Meridian Corp — Demand & Profitability Intelligence Platform
 
-Profitability intelligence for a recycled foodservice-products manufacturer.
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://manufacturer-demand-profit.streamlit.app/)
 
-## Problem statement
+Enterprise demand analytics, margin waterfall deconstruction, and human-in-the-loop profitability intelligence for a recycled foodservice products manufacturer.
 
-Finance can tell you what the company earned. It cannot quickly tell you **why
-margin moved, which customers and SKUs actually make money after all deductions,
-and which of those answers depend on an accounting choice rather than a fact.**
+---
 
-Today that analysis is a multi-day manual exercise across sales, cost and
-production extracts. We are building an agent that does the diagnosis and
-drafts the recommendation, while a human owns every decision that moves money.
+## 🌐 Live Application
+* **Production URL:** [https://manufacturer-demand-profit.streamlit.app/](https://manufacturer-demand-profit.streamlit.app/)
+* **Engine:** DuckDB embedded analytics with ANSI SQL Semantic Layer (`finance.duckdb`)
 
-Full scope, including what is deliberately out of scope, is in [SCOPE.md](SCOPE.md).
+---
 
-## Quick start
+## 🏗️ Architecture & Data Pipeline
 
-```bash
-make setup     # install deps
-make data      # generate the synthetic dataset into data/raw
+```mermaid
+flowchart TD
+    A["data/generate_data.py<br/>(Physical Cost Drivers: kg x Price, Machine Hours x Labor)"] -->|"Writes Raw CSVs"| B["data/raw/<br/>(Fact & Dimension Tables)"]
+    B -->|"src/load.py<br/>(10 Integrity Assertions)"| C["finance.duckdb<br/>(Embedded Analytical DB)"]
+    D["src/semantic/views.sql<br/>(vw_line_margin, vw_margin_waterfall, etc.)"] -->|"Compiles Views"| C
+    C -->|"Direct Query / Cached DataFrames"| E["app.py & src/components/<br/>(Streamlit Intelligence Dashboard)"]
 ```
 
-## Data
+---
 
-**We are not using anyone's real company data.** `data/generate_data.py` produces
-a synthetic dataset modelled on a real manufacturing schema — 24 months, 14 SKUs,
-8 customers, 3 production lines, 2 plants. Column-level detail is in
-[docs/DATA_DICTIONARY.md](docs/DATA_DICTIONARY.md).
+## 📊 Core Features & Dashboard Tabs
 
-CSVs are not committed. The generator with a fixed seed is the source of truth,
-so everyone regenerates byte-identical files.
+1. **📊 Executive Overview (`src/components/overview.py`):**
+   * High-level financial KPIs: Gross Revenue, Net Revenue, Units Sold, Gross Profit, and Pocket Contribution Margin.
+   * Monthly revenue/profit trends and regional revenue share breakdowns.
+   * Top 5 Products and Top 5 Customer Accounts with margin performance.
+2. **📦 Demand Analytics (`src/components/demand.py`):**
+   * Granular historical order volume (`Quantity_Sold`) over time by product category.
+   * Seasonality analysis matrix by month and customer channel volume grouping.
+   * Price elasticity and discount sensitivity regression analysis.
+3. **💰 Profit Waterfall & Margins (`src/components/profit.py`):**
+   * Complete financial waterfall: $\text{Gross Sales} \rightarrow \text{Discounts} \rightarrow \text{Returns} \rightarrow \text{Net Sales} \rightarrow \text{Material} \rightarrow \text{Labor} \rightarrow \text{Gross Profit} \rightarrow \text{Freight} \rightarrow \text{Rebates} \rightarrow \text{Contribution Margin}$.
+   * **⚖️ Human-in-the-Loop Overhead Allocation Sensitivity:** Side-by-side comparison of **Units Produced Basis** vs. **Machine Hours Basis** (revealing how category margins shift, such as Cutlery switching between profitable and loss-making).
+   * Customer Profitability Matrix exposing margin erosion ("Rebate Trap").
+4. **🏢 OpEx & Budget Targets (`src/components/budget_opex.py`):**
+   * Operating expenses grouped by function (SG&A, Operations, Sales, Marketing) and cost centers.
+   * Target budget vs. management forecast benchmarks across profit centers.
 
-The generator plants a known set of findings, so we can measure whether the agent
-finds them instead of arguing about whether its output "looks right". The answer
-key lives in `eval/answer_key.yaml` — **do not paste it into an agent prompt.**
+---
 
+## 🚀 Quick Start
+
+### 1. Installation
 ```bash
-python eval/score.py --input runs/agent_output.md
+# Clone the repository
+git clone https://github.com/svijetaj/manufacturer-demand-profitability.git
+cd manufacturer-demand-profitability
+
+# Create virtual environment and install dependencies
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-## Workstreams
+### 2. Generate Synthetic Data & Build DuckDB
+```bash
+# Generate driver-based synthetic dataset
+python3 data/generate_data.py --out data/raw
 
-Pick one, claim it via an issue, work on a branch.
+# Load CSVs, compile semantic views, and run 10 integrity assertions
+python3 src/load.py --raw data/raw --db finance.duckdb --views src/semantic/views.sql
+```
 
-| # | Workstream | Deliverable |
-|---|---|---|
-| A | Data + semantic layer | Load CSVs, build the margin waterfall (gross → contribution → net), document metric definitions |
-| B | Profitability agent | Question in, answer with evidence trail out |
-| C | Variance explanation | Decompose month-over-month margin change into price / volume / mix / cost |
-| D | Anomaly detection | Duplicates, returns, price-cost divergence, rebate outliers |
-| E | Allocation sensitivity + human-in-loop | Side-by-side ranking under different bases; approval surface for recommended actions |
-| F | Interface | Conversational front end over B–E |
-| G | Eval | Score agent output against the planted findings; this is how we prove it works |
+### 3. Launch Dashboard
+```bash
+streamlit run app.py
+```
 
-A and G unblock or validate everyone else. They start first.
+---
 
-## Working agreement
+## 🧪 Data Quality & Integrity Assertions
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Short version: branch per workstream, PR
-into `main`, one reviewer, no real company data ever, and log real decisions in
-[docs/DECISIONS.md](docs/DECISIONS.md) rather than only in chat.
+The database loader (`src/load.py`) automatically runs 10 strict assertions prior to loading:
+1. `[ok]` Net Sales ties to components ($\text{Gross} - \text{Discounts} - \text{Returns} = \text{Net}$).
+2. `[ok]` No future-dated transactions.
+3. `[ok]` No future-dated production.
+4. `[ok]` Every order belongs to exactly one customer.
+5. `[ok]` Every sales line maps to a valid product in `Dim_Product`.
+6. `[ok]` Every sales line maps to a valid customer in `Dim_Customer`.
+7. `[ok]` Every positive sales line has a corresponding manufacturing cost row in `Fact_COGS`.
+8. `[ok]` Overhead is unallocated in `Fact_Overhead_Pool` (not pre-baked into fact rows).
+9. `[ok]` OpEx is a plausible proportion of total revenue ($< 40\%$).
+10. `[ok]` Budget targets align within $2\times$ of actual revenue scale.
+
+---
+
+## 📚 Documentation
+* [Data Dictionary](docs/DATA_DICTIONARY.md)
+* [Data Model Descriptive Report](DATA_MODEL_DESCRIPTIVE_REPORT.md)
+* [Project Scope & Decision Log](SCOPE.md)
+* [Workstreams & Task Force Breakdown](docs/WORKSTREAMS.md)
