@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Generator produces the expected tables
+        run: |
+          cd data && python generate_data.py --out ci_out
+          for f in dim_sku dim_customer fact_order_lines fact_freight \
+                   fact_production ref_material_costs ref_overhead_pools; do
+            test -s "ci_out/$f.csv" || { echo "missing $f.csv"; exit 1; }
+          done
+          echo "all tables present"
+      - name: No CSVs committed
+        run: |
+          if git ls-files '*.csv' | grep -q .; then
+            echo "CSV files are committed - run make data instead"; exit 1
+          fi

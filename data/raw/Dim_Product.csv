@@ -1,0 +1,81 @@
+Product_ID,Product_Code,Product_Name,Product_Category,Product_Subcategory,Brand,SKU,Product_Line,Material,Unit_Weight_G,Cube_Index,List_Price_USD,Plant_ID,Launch_Date,Discontinued_Flag
+P0001,PA-0001,Paper Plates Standard 1,Paper Plates,Standard,EcoServe,SKU-00001,Paper Plates Line,Bagasse,15.0,0.9,0.104,PLANT-EAST,2024-01-01,N
+P0002,BO-0002,Bowls Standard 2,Bowls,Standard,GreenChoice,SKU-00002,Bowls Line,Molded Fiber,20.0,3.4,0.121,PLANT-WEST,2024-01-01,N
+P0003,PA-0003,Paper Cups Standard 3,Paper Cups,Standard,PurePack,SKU-00003,Paper Cups Line,PLA Paper,11.0,4.2,0.108,PLANT-CENTRAL,2024-01-01,N
+P0004,FO-0004,Food Containers Standard 4,Food Containers,Standard,EarthWare,SKU-00004,Food Containers Line,RPET,28.0,3.0,0.243,PLANT-SOUTH,2024-01-01,N
+P0005,CU-0005,Cutlery Standard 5,Cutlery,Standard,EcoServe,SKU-00005,Cutlery Line,PLA Paper,5.5,0.5,0.044,PLANT-EAST,2024-01-01,N
+P0006,PA-0006,Paper Plates Heavy Duty 6,Paper Plates,Heavy Duty,GreenChoice,SKU-00006,Paper Plates Line,Bagasse,17.7,0.9,0.1227,PLANT-WEST,2024-01-01,N
+P0007,BO-0007,Bowls Heavy Duty 7,Bowls,Heavy Duty,PurePack,SKU-00007,Bowls Line,Molded Fiber,23.6,3.4,0.1428,PLANT-CENTRAL,2024-01-01,N
+P0008,PA-0008,Paper Cups Heavy Duty 8,Paper Cups,Heavy Duty,EarthWare,SKU-00008,Paper Cups Line,PLA Paper,12.98,4.2,0.1274,PLANT-SOUTH,2024-01-01,N
+P0009,FO-0009,Food Containers Heavy Duty 9,Food Containers,Heavy Duty,EcoServe,SKU-00009,Food Containers Line,RPET,33.04,3.0,0.2867,PLANT-EAST,2024-01-01,N
+P0010,CU-0010,Cutlery Heavy Duty 10,Cutlery,Heavy Duty,GreenChoice,SKU-00010,Cutlery Line,PLA Paper,6.49,0.5,0.0519,PLANT-WEST,2024-01-01,N
+P0011,PA-0011,Paper Plates Premium 11,Paper Plates,Premium,PurePack,SKU-00011,Paper Plates Line,Bagasse,20.1,0.9,0.1394,PLANT-CENTRAL,2024-01-01,N
+P0012,BO-0012,Bowls Premium 12,Bowls,Premium,EarthWare,SKU-00012,Bowls Line,Molded Fiber,26.8,3.4,0.1621,PLANT-SOUTH,2024-01-01,N
+P0013,PA-0013,Paper Cups Premium 13,Paper Cups,Premium,EcoServe,SKU-00013,Paper Cups Line,PLA Paper,14.74,4.2,0.1447,PLANT-EAST,2024-01-01,N
+P0014,FO-0014,Food Containers Premium 14,Food Containers,Premium,GreenChoice,SKU-00014,Food Containers Line,RPET,37.52,3.0,0.3256,PLANT-WEST,2024-01-01,N
+P0015,CU-0015,Cutlery Premium 15,Cutlery,Premium,PurePack,SKU-00015,Cutlery Line,PLA Paper,7.37,0.5,0.059,PLANT-CENTRAL,2024-01-01,N
+P0016,PA-0016,Paper Plates Standard 16,Paper Plates,Standard,EarthWare,SKU-00016,Paper Plates Line,Bagasse,15.0,0.9,0.104,PLANT-SOUTH,2024-01-01,N
+P0017,BO-0017,Bowls Standard 17,Bowls,Standard,EcoServe,SKU-00017,Bowls Line,Molded Fiber,20.0,3.4,0.121,PLANT-EAST,2024-01-01,N
+P0018,PA-0018,Paper Cups Standard 18,Paper Cups,Standard,GreenChoice,SKU-00018,Paper Cups Line,PLA Paper,11.0,4.2,0.108,PLANT-WEST,2024-01-01,N
+P0019,FO-0019,Food Containers Standard 19,Food Containers,Standard,PurePack,SKU-00019,Food Containers Line,RPET,28.0,3.0,0.243,PLANT-CENTRAL,2024-01-01,N
+P0020,CU-0020,Cutlery Standard 20,Cutlery,Standard,EarthWare,SKU-00020,Cutlery Line,PLA Paper,5.5,0.5,0.044,PLANT-SOUTH,2024-01-01,N
+P0021,PA-0021,Paper Plates Heavy Duty 21,Paper Plates,Heavy Duty,EcoServe,SKU-00021,Paper Plates Line,Bagasse,17.7,0.9,0.1227,PLANT-EAST,2024-01-01,N
+P0022,BO-0022,Bowls Heavy Duty 22,Bowls,Heavy Duty,GreenChoice,SKU-00022,Bowls Line,Molded Fiber,23.6,3.4,0.1428,PLANT-WEST,2024-01-01,N
+P0023,PA-0023,Paper Cups Heavy Duty 23,Paper Cups,Heavy Duty,PurePack,SKU-00023,Paper Cups Line,PLA Paper,12.98,4.2,0.1274,PLANT-CENTRAL,2024-01-01,N
+P0024,FO-0024,Food Containers Heavy Duty 24,Food Containers,Heavy Duty,EarthWare,SKU-00024,Food Containers Line,RPET,33.04,3.0,0.2867,PLANT-SOUTH,2024-01-01,N
+P0025,CU-0025,Cutlery Heavy Duty 25,Cutlery,Heavy Duty,EcoServe,SKU-00025,Cutlery Line,PLA Paper,6.49,0.5,0.0519,PLANT-EAST,2024-01-01,N
+P0026,PA-0026,Paper Plates Premium 26,Paper Plates,Premium,GreenChoice,SKU-00026,Paper Plates Line,Bagasse,20.1,0.9,0.1394,PLANT-WEST,2024-01-01,N
+P0027,BO-0027,Bowls Premium 27,Bowls,Premium,PurePack,SKU-00027,Bowls Line,Molded Fiber,26.8,3.4,0.1621,PLANT-CENTRAL,2024-01-01,N
+P0028,PA-0028,Paper Cups Premium 28,Paper Cups,Premium,EarthWare,SKU-00028,Paper Cups Line,PLA Paper,14.74,4.2,0.1447,PLANT-SOUTH,2024-01-01,N
+P0029,FO-0029,Food Containers Premium 29,Food Containers,Premium,EcoServe,SKU-00029,Food Containers Line,RPET,37.52,3.0,0.3256,PLANT-EAST,2024-01-01,N
+P0030,CU-0030,Cutlery Premium 30,Cutlery,Premium,GreenChoice,SKU-00030,Cutlery Line,PLA Paper,7.37,0.5,0.059,PLANT-WEST,2024-01-01,N
+P0031,PA-0031,Paper Plates Standard 31,Paper Plates,Standard,PurePack,SKU-00031,Paper Plates Line,Bagasse,15.0,0.9,0.104,PLANT-CENTRAL,2024-01-01,N
+P0032,BO-0032,Bowls Standard 32,Bowls,Standard,EarthWare,SKU-00032,Bowls Line,Molded Fiber,20.0,3.4,0.121,PLANT-SOUTH,2024-01-01,N
+P0033,PA-0033,Paper Cups Standard 33,Paper Cups,Standard,EcoServe,SKU-00033,Paper Cups Line,PLA Paper,11.0,4.2,0.108,PLANT-EAST,2024-01-01,N
+P0034,FO-0034,Food Containers Standard 34,Food Containers,Standard,GreenChoice,SKU-00034,Food Containers Line,RPET,28.0,3.0,0.243,PLANT-WEST,2024-01-01,N
+P0035,CU-0035,Cutlery Standard 35,Cutlery,Standard,PurePack,SKU-00035,Cutlery Line,PLA Paper,5.5,0.5,0.044,PLANT-CENTRAL,2024-01-01,N
+P0036,PA-0036,Paper Plates Heavy Duty 36,Paper Plates,Heavy Duty,EarthWare,SKU-00036,Paper Plates Line,Bagasse,17.7,0.9,0.1227,PLANT-SOUTH,2024-01-01,N
+P0037,BO-0037,Bowls Heavy Duty 37,Bowls,Heavy Duty,EcoServe,SKU-00037,Bowls Line,Molded Fiber,23.6,3.4,0.1428,PLANT-EAST,2024-01-01,N
+P0038,PA-0038,Paper Cups Heavy Duty 38,Paper Cups,Heavy Duty,GreenChoice,SKU-00038,Paper Cups Line,PLA Paper,12.98,4.2,0.1274,PLANT-WEST,2024-01-01,N
+P0039,FO-0039,Food Containers Heavy Duty 39,Food Containers,Heavy Duty,PurePack,SKU-00039,Food Containers Line,RPET,33.04,3.0,0.2867,PLANT-CENTRAL,2024-01-01,N
+P0040,CU-0040,Cutlery Heavy Duty 40,Cutlery,Heavy Duty,EarthWare,SKU-00040,Cutlery Line,PLA Paper,6.49,0.5,0.0519,PLANT-SOUTH,2024-01-01,N
+P0041,PA-0041,Paper Plates Premium 41,Paper Plates,Premium,EcoServe,SKU-00041,Paper Plates Line,Bagasse,20.1,0.9,0.1394,PLANT-EAST,2024-01-01,N
+P0042,BO-0042,Bowls Premium 42,Bowls,Premium,GreenChoice,SKU-00042,Bowls Line,Molded Fiber,26.8,3.4,0.1621,PLANT-WEST,2024-01-01,N
+P0043,PA-0043,Paper Cups Premium 43,Paper Cups,Premium,PurePack,SKU-00043,Paper Cups Line,PLA Paper,14.74,4.2,0.1447,PLANT-CENTRAL,2024-01-01,N
+P0044,FO-0044,Food Containers Premium 44,Food Containers,Premium,EarthWare,SKU-00044,Food Containers Line,RPET,37.52,3.0,0.3256,PLANT-SOUTH,2024-01-01,N
+P0045,CU-0045,Cutlery Premium 45,Cutlery,Premium,EcoServe,SKU-00045,Cutlery Line,PLA Paper,7.37,0.5,0.059,PLANT-EAST,2024-01-01,N
+P0046,PA-0046,Paper Plates Standard 46,Paper Plates,Standard,GreenChoice,SKU-00046,Paper Plates Line,Bagasse,15.0,0.9,0.104,PLANT-WEST,2024-01-01,N
+P0047,BO-0047,Bowls Standard 47,Bowls,Standard,PurePack,SKU-00047,Bowls Line,Molded Fiber,20.0,3.4,0.121,PLANT-CENTRAL,2024-01-01,N
+P0048,PA-0048,Paper Cups Standard 48,Paper Cups,Standard,EarthWare,SKU-00048,Paper Cups Line,PLA Paper,11.0,4.2,0.108,PLANT-SOUTH,2024-01-01,N
+P0049,FO-0049,Food Containers Standard 49,Food Containers,Standard,EcoServe,SKU-00049,Food Containers Line,RPET,28.0,3.0,0.243,PLANT-EAST,2024-01-01,N
+P0050,CU-0050,Cutlery Standard 50,Cutlery,Standard,GreenChoice,SKU-00050,Cutlery Line,PLA Paper,5.5,0.5,0.044,PLANT-WEST,2024-01-01,N
+P0051,PA-0051,Paper Plates Heavy Duty 51,Paper Plates,Heavy Duty,PurePack,SKU-00051,Paper Plates Line,Bagasse,17.7,0.9,0.1227,PLANT-CENTRAL,2024-01-01,N
+P0052,BO-0052,Bowls Heavy Duty 52,Bowls,Heavy Duty,EarthWare,SKU-00052,Bowls Line,Molded Fiber,23.6,3.4,0.1428,PLANT-SOUTH,2024-01-01,N
+P0053,PA-0053,Paper Cups Heavy Duty 53,Paper Cups,Heavy Duty,EcoServe,SKU-00053,Paper Cups Line,PLA Paper,12.98,4.2,0.1274,PLANT-EAST,2024-01-01,N
+P0054,FO-0054,Food Containers Heavy Duty 54,Food Containers,Heavy Duty,GreenChoice,SKU-00054,Food Containers Line,RPET,33.04,3.0,0.2867,PLANT-WEST,2024-01-01,N
+P0055,CU-0055,Cutlery Heavy Duty 55,Cutlery,Heavy Duty,PurePack,SKU-00055,Cutlery Line,PLA Paper,6.49,0.5,0.0519,PLANT-CENTRAL,2024-01-01,N
+P0056,PA-0056,Paper Plates Premium 56,Paper Plates,Premium,EarthWare,SKU-00056,Paper Plates Line,Bagasse,20.1,0.9,0.1394,PLANT-SOUTH,2024-01-01,N
+P0057,BO-0057,Bowls Premium 57,Bowls,Premium,EcoServe,SKU-00057,Bowls Line,Molded Fiber,26.8,3.4,0.1621,PLANT-EAST,2024-01-01,N
+P0058,PA-0058,Paper Cups Premium 58,Paper Cups,Premium,GreenChoice,SKU-00058,Paper Cups Line,PLA Paper,14.74,4.2,0.1447,PLANT-WEST,2024-01-01,N
+P0059,FO-0059,Food Containers Premium 59,Food Containers,Premium,PurePack,SKU-00059,Food Containers Line,RPET,37.52,3.0,0.3256,PLANT-CENTRAL,2024-01-01,N
+P0060,CU-0060,Cutlery Premium 60,Cutlery,Premium,EarthWare,SKU-00060,Cutlery Line,PLA Paper,7.37,0.5,0.059,PLANT-SOUTH,2024-01-01,N
+P0061,PA-0061,Paper Plates Standard 61,Paper Plates,Standard,EcoServe,SKU-00061,Paper Plates Line,Bagasse,15.0,0.9,0.104,PLANT-EAST,2024-01-01,N
+P0062,BO-0062,Bowls Standard 62,Bowls,Standard,GreenChoice,SKU-00062,Bowls Line,Molded Fiber,20.0,3.4,0.121,PLANT-WEST,2024-01-01,N
+P0063,PA-0063,Paper Cups Standard 63,Paper Cups,Standard,PurePack,SKU-00063,Paper Cups Line,PLA Paper,11.0,4.2,0.108,PLANT-CENTRAL,2024-01-01,N
+P0064,FO-0064,Food Containers Standard 64,Food Containers,Standard,EarthWare,SKU-00064,Food Containers Line,RPET,28.0,3.0,0.243,PLANT-SOUTH,2024-01-01,N
+P0065,CU-0065,Cutlery Standard 65,Cutlery,Standard,EcoServe,SKU-00065,Cutlery Line,PLA Paper,5.5,0.5,0.044,PLANT-EAST,2024-01-01,N
+P0066,PA-0066,Paper Plates Heavy Duty 66,Paper Plates,Heavy Duty,GreenChoice,SKU-00066,Paper Plates Line,Bagasse,17.7,0.9,0.1227,PLANT-WEST,2024-01-01,N
+P0067,BO-0067,Bowls Heavy Duty 67,Bowls,Heavy Duty,PurePack,SKU-00067,Bowls Line,Molded Fiber,23.6,3.4,0.1428,PLANT-CENTRAL,2024-01-01,N
+P0068,PA-0068,Paper Cups Heavy Duty 68,Paper Cups,Heavy Duty,EarthWare,SKU-00068,Paper Cups Line,PLA Paper,12.98,4.2,0.1274,PLANT-SOUTH,2024-01-01,N
+P0069,FO-0069,Food Containers Heavy Duty 69,Food Containers,Heavy Duty,EcoServe,SKU-00069,Food Containers Line,RPET,33.04,3.0,0.2867,PLANT-EAST,2024-01-01,N
+P0070,CU-0070,Cutlery Heavy Duty 70,Cutlery,Heavy Duty,GreenChoice,SKU-00070,Cutlery Line,PLA Paper,6.49,0.5,0.0519,PLANT-WEST,2024-01-01,N
+P0071,PA-0071,Paper Plates Premium 71,Paper Plates,Premium,PurePack,SKU-00071,Paper Plates Line,Bagasse,20.1,0.9,0.1394,PLANT-CENTRAL,2024-01-01,N
+P0072,BO-0072,Bowls Premium 72,Bowls,Premium,EarthWare,SKU-00072,Bowls Line,Molded Fiber,26.8,3.4,0.1621,PLANT-SOUTH,2024-01-01,N
+P0073,PA-0073,Paper Cups Premium 73,Paper Cups,Premium,EcoServe,SKU-00073,Paper Cups Line,PLA Paper,14.74,4.2,0.1447,PLANT-EAST,2024-01-01,N
+P0074,FO-0074,Food Containers Premium 74,Food Containers,Premium,GreenChoice,SKU-00074,Food Containers Line,RPET,37.52,3.0,0.3256,PLANT-WEST,2024-01-01,N
+P0075,CU-0075,Cutlery Premium 75,Cutlery,Premium,PurePack,SKU-00075,Cutlery Line,PLA Paper,7.37,0.5,0.059,PLANT-CENTRAL,2024-01-01,N
+P0076,PA-0076,Paper Plates Standard 76,Paper Plates,Standard,EarthWare,SKU-00076,Paper Plates Line,Bagasse,15.0,0.9,0.104,PLANT-SOUTH,2024-01-01,N
+P0077,BO-0077,Bowls Standard 77,Bowls,Standard,EcoServe,SKU-00077,Bowls Line,Molded Fiber,20.0,3.4,0.121,PLANT-EAST,2024-01-01,N
+P0078,PA-0078,Paper Cups Standard 78,Paper Cups,Standard,GreenChoice,SKU-00078,Paper Cups Line,PLA Paper,11.0,4.2,0.108,PLANT-WEST,2024-01-01,N
+P0079,FO-0079,Food Containers Standard 79,Food Containers,Standard,PurePack,SKU-00079,Food Containers Line,RPET,28.0,3.0,0.243,PLANT-CENTRAL,2024-01-01,N
+P0080,CU-0080,Cutlery Standard 80,Cutlery,Standard,EarthWare,SKU-00080,Cutlery Line,PLA Paper,5.5,0.5,0.044,PLANT-SOUTH,2024-01-01,N

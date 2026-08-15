@@ -35,9 +35,9 @@ def render_demand(date_range, selected_categories, selected_segments, selected_r
         granularity = st.selectbox("Time Aggregation:", ["Monthly", "Weekly", "Daily"], index=0)
 
     if granularity == "Monthly":
-        group_col = "CAST(Year AS VARCHAR) || '-' || LPAD(CAST(Fiscal_Period AS VARCHAR), 2, '0')"
+        group_col = "period"
     elif granularity == "Weekly":
-        group_col = "CAST(Year AS VARCHAR) || '-W' || LPAD(CAST(Week AS VARCHAR), 2, '0')"
+        group_col = "strftime(CAST(Transaction_Date AS DATE), '%Y-W%W')"
     else:
         group_col = "CAST(Transaction_Date AS VARCHAR)"
 
@@ -46,9 +46,9 @@ def render_demand(date_range, selected_categories, selected_segments, selected_r
             {group_col} AS Time_Period,
             Product_Category,
             SUM(Quantity_Sold) AS Total_Units,
-            AVG(Realized_Unit_Price) AS Avg_Unit_Price,
+            SUM(Net_Sales_Amount) / NULLIF(SUM(Quantity_Sold), 0) AS Avg_Unit_Price,
             SUM(Net_Sales_Amount) AS Net_Sales
-        FROM v_full_transactions
+        FROM vw_line_margin
         WHERE {where_sql}
         GROUP BY 1, 2
         ORDER BY 1;
@@ -81,19 +81,19 @@ def render_demand(date_range, selected_categories, selected_segments, selected_r
         st.subheader("🗓️ Seasonality Matrix (Demand by Month)")
         season_query = f"""
             SELECT 
-                Month,
-                Fiscal_Period,
+                strftime(CAST(Transaction_Date AS DATE), '%B') AS Month_Name,
+                CAST(strftime(CAST(Transaction_Date AS DATE), '%m') AS INTEGER) AS Month_Num,
                 SUM(Quantity_Sold) AS Total_Units
-            FROM v_full_transactions
+            FROM vw_line_margin
             WHERE {where_sql}
             GROUP BY 1, 2
-            ORDER BY Fiscal_Period;
+            ORDER BY Month_Num;
         """
         df_season = query_df(season_query)
         if not df_season.empty:
             fig_season = px.bar(
                 df_season,
-                x='Month',
+                x='Month_Name',
                 y='Total_Units',
                 color='Total_Units',
                 color_continuous_scale='Teal',
@@ -109,7 +109,7 @@ def render_demand(date_range, selected_categories, selected_segments, selected_r
                 Customer_Segment,
                 Customer_Type,
                 SUM(Quantity_Sold) AS Total_Units
-            FROM v_full_transactions
+            FROM vw_line_margin
             WHERE {where_sql}
             GROUP BY 1, 2
             ORDER BY Total_Units DESC;
@@ -135,13 +135,13 @@ def render_demand(date_range, selected_categories, selected_segments, selected_r
 
     elasticity_query = f"""
         SELECT 
-            Realized_Unit_Price,
-            Discount_Pct,
+            (Net_Sales_Amount / NULLIF(Quantity_Sold, 0)) AS Realized_Unit_Price,
+            (Discount_Amount / NULLIF(Gross_Sales_Amount, 0)) * 100 AS Discount_Pct,
             Quantity_Sold,
             Product_Category,
             Customer_Segment
-        FROM v_full_transactions
-        WHERE {where_sql} AND Realized_Unit_Price > 0 AND Realized_Unit_Price < 10
+        FROM vw_line_margin
+        WHERE {where_sql} AND Quantity_Sold > 0
         LIMIT 1000;
     """
     df_elasticity = query_df(elasticity_query)

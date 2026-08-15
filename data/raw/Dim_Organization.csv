@@ -1,0 +1,9 @@
+Business_Unit,Division,Department,Cost_Center,Profit_Center,Sales_Org,Region,Country
+Foodservice Packaging,Division 1,Department 1,CC001,PC001,Sales Org 1,Midwest,USA
+Retail Packaging,Division 2,Department 2,CC002,PC002,Sales Org 2,Northeast,USA
+Industrial,Division 1,Department 3,CC003,PC003,Sales Org 3,South,USA
+Private Label,Division 2,Department 4,CC004,PC004,Sales Org 4,West,USA
+Foodservice Packaging,Division 1,Department 5,CC005,PC001,Sales Org 5,Midwest,USA
+Retail Packaging,Division 2,Department 6,CC006,PC002,Sales Org 1,Northeast,USA
+Industrial,Division 1,Department 7,CC007,PC003,Sales Org 2,South,USA
+Private Label,Division 2,Department 8,CC008,PC004,Sales Org 3,West,USA

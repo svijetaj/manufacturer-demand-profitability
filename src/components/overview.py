@@ -10,7 +10,7 @@ from src.db import query_df
 
 def render_overview(date_range, selected_categories, selected_segments, selected_regions):
     st.markdown("## 📊 Executive Overview")
-    st.caption("High-level financial performance, demand volume, and corporate KPIs across 2025–2026.")
+    st.caption("High-level financial performance, demand volume, and corporate KPIs powered by the unified semantic layer.")
 
     # Filter clause construction
     where_clauses = [
@@ -40,7 +40,7 @@ def render_overview(date_range, selected_categories, selected_segments, selected
             (SUM(Contribution_Margin) / NULLIF(SUM(Net_Sales_Amount), 0)) * 100 AS Pocket_Margin_Pct,
             COUNT(DISTINCT Order_ID) AS Total_Orders,
             COUNT(DISTINCT Customer_ID) AS Active_Customers
-        FROM v_full_transactions
+        FROM vw_line_margin
         WHERE {where_sql};
     """
     kpis = query_df(kpi_query).iloc[0]
@@ -68,11 +68,11 @@ def render_overview(date_range, selected_categories, selected_segments, selected
         st.subheader("📅 Monthly Revenue & Margin Trend")
         trend_query = f"""
             SELECT 
-                CAST(Year AS VARCHAR) || '-' || LPAD(CAST(Fiscal_Period AS VARCHAR), 2, '0') AS Year_Month,
+                period AS Year_Month,
                 SUM(Net_Sales_Amount) AS Net_Sales,
                 SUM(Gross_Profit) AS Gross_Profit,
                 SUM(Contribution_Margin) AS Contribution_Margin
-            FROM v_full_transactions
+            FROM vw_line_margin
             WHERE {where_sql}
             GROUP BY 1
             ORDER BY 1;
@@ -100,7 +100,7 @@ def render_overview(date_range, selected_categories, selected_segments, selected
                 Sales_Region,
                 SUM(Net_Sales_Amount) AS Net_Sales,
                 SUM(Quantity_Sold) AS Quantity_Sold
-            FROM v_full_transactions
+            FROM vw_line_margin
             WHERE {where_sql}
             GROUP BY 1
             ORDER BY Net_Sales DESC;
@@ -130,12 +130,13 @@ def render_overview(date_range, selected_categories, selected_segments, selected
         st.subheader("🏆 Top 5 Products by Revenue")
         top_p_query = f"""
             SELECT 
-                Product_Name,
-                Product_Category,
-                SUM(Quantity_Sold) AS Units_Sold,
-                SUM(Net_Sales_Amount) AS Net_Sales,
-                AVG(Gross_Margin_Pct) AS Avg_Gross_Margin
-            FROM v_full_transactions
+                p.Product_Name,
+                m.Product_Category,
+                SUM(m.Quantity_Sold) AS Units_Sold,
+                SUM(m.Net_Sales_Amount) AS Net_Sales,
+                (SUM(m.Gross_Profit) / NULLIF(SUM(m.Net_Sales_Amount), 0)) * 100 AS Avg_Gross_Margin
+            FROM vw_line_margin m
+            JOIN Dim_Product p ON p.Product_ID = m.Product_ID
             WHERE {where_sql}
             GROUP BY 1, 2
             ORDER BY Net_Sales DESC
@@ -152,12 +153,13 @@ def render_overview(date_range, selected_categories, selected_segments, selected
         st.subheader("🏢 Top 5 Customers by Revenue")
         top_c_query = f"""
             SELECT 
-                Customer_Name,
-                Customer_Segment,
-                Customer_Type,
-                SUM(Net_Sales_Amount) AS Net_Sales,
-                AVG(Contribution_Margin_Pct) AS Avg_Pocket_Margin
-            FROM v_full_transactions
+                c.Customer_Name,
+                m.Customer_Segment,
+                m.Customer_Type,
+                SUM(m.Net_Sales_Amount) AS Net_Sales,
+                (SUM(m.Contribution_Margin) / NULLIF(SUM(m.Net_Sales_Amount), 0)) * 100 AS Avg_Pocket_Margin
+            FROM vw_line_margin m
+            JOIN Dim_Customer c ON c.Customer_ID = m.Customer_ID
             WHERE {where_sql}
             GROUP BY 1, 2, 3
             ORDER BY Net_Sales DESC

@@ -3,17 +3,20 @@ Database connection and query utilities for finance.duckdb.
 """
 
 import os
+import sys
 import duckdb
 import pandas as pd
 
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "finance.duckdb")
 
 def ensure_db_exists():
-    """Ensures finance.duckdb exists; if not, ingests from CSVs automatically."""
+    """Ensures finance.duckdb exists; if not, generates data and loads into DuckDB automatically."""
     if not os.path.exists(DB_PATH):
-        print("finance.duckdb not found. Running auto-ingestion...")
-        from scripts.ingest_to_duckdb import run_ingestion
-        run_ingestion()
+        print("finance.duckdb not found. Running driver-based data generator & loader...")
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        import subprocess
+        subprocess.run([sys.executable, os.path.join(project_root, "data", "generate_data.py"), "--out", os.path.join(project_root, "data", "raw")], check=True)
+        subprocess.run([sys.executable, os.path.join(project_root, "src", "load.py"), "--raw", os.path.join(project_root, "data", "raw"), "--db", DB_PATH, "--views", os.path.join(project_root, "src", "semantic", "views.sql")], check=True)
 
 def get_connection(read_only: bool = True) -> duckdb.DuckDBPyConnection:
     """Returns a DuckDB connection to the local database."""

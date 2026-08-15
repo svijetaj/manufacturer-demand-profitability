@@ -9,16 +9,16 @@ import pandas as pd
 from src.db import query_df
 
 def render_budget_opex(date_range):
-    st.markdown("## 🏢 Operating Expenses & Budget Variance")
-    st.caption("Benchmark operational overhead (SG&A, Operations, Sales OpEx) and compare enterprise performance against `Fact_Budget` targets.")
+    st.markdown("## 🏢 Operating Expenses & Budget Targets")
+    st.caption("Benchmark operational overhead (SG&A, Operations, Sales, Marketing) and compare corporate performance against `Fact_Budget` targets.")
 
     # 1. Operating Expense Breakdown
-    st.subheader("📋 Operating Expenses by Department & Type")
+    st.subheader("📋 Operating Expenses by Function & Cost Center")
     opex_query = f"""
         SELECT 
-            Department,
-            Expense_Type,
-            Expense_Category,
+            Expense_Function,
+            Cost_Center,
+            GL_Account,
             SUM(Expense_Amount) AS Total_Expense
         FROM Fact_Operating_Expense
         WHERE Expense_Date BETWEEN '{date_range[0]}' AND '{date_range[1]}'
@@ -30,27 +30,27 @@ def render_budget_opex(date_range):
     col_o1, col_o2 = st.columns([5, 5])
     with col_o1:
         if not df_opex.empty:
-            fig_dept = px.bar(
-                df_opex.groupby("Department", as_index=False)["Total_Expense"].sum().sort_values("Total_Expense", ascending=True),
+            fig_func = px.bar(
+                df_opex.groupby("Expense_Function", as_index=False)["Total_Expense"].sum().sort_values("Total_Expense", ascending=True),
                 x="Total_Expense",
-                y="Department",
+                y="Expense_Function",
                 orientation="h",
                 color="Total_Expense",
                 color_continuous_scale="Purples",
-                title="Total Operating Expense by Department"
+                title="Total Operating Expense by Function"
             )
-            fig_dept.update_layout(height=350, template="plotly_dark", margin=dict(l=20, r=20, t=40, b=20))
-            st.plotly_chart(fig_dept, use_container_width=True)
+            fig_func.update_layout(height=350, template="plotly_dark", margin=dict(l=20, r=20, t=40, b=20))
+            st.plotly_chart(fig_func, use_container_width=True)
 
     with col_o2:
         if not df_opex.empty:
             fig_type = px.pie(
-                df_opex.groupby("Expense_Type", as_index=False)["Total_Expense"].sum(),
-                names="Expense_Type",
+                df_opex.groupby("Expense_Function", as_index=False)["Total_Expense"].sum(),
+                names="Expense_Function",
                 values="Total_Expense",
                 hole=0.45,
-                color_discrete_sequence=["#c084fc", "#a855f7", "#7e22ce"],
-                title="Expense by Function (Operations, SG&A, Sales)"
+                color_discrete_sequence=["#c084fc", "#a855f7", "#7e22ce", "#e9d5ff"],
+                title="Expense Distribution by Function"
             )
             fig_type.update_layout(height=350, template="plotly_dark", margin=dict(l=20, r=20, t=40, b=20))
             st.plotly_chart(fig_type, use_container_width=True)
@@ -58,12 +58,12 @@ def render_budget_opex(date_range):
     st.markdown("---")
 
     # 2. Budget vs Actuals Analysis
-    st.subheader("🎯 Management Budget vs Actuals by Profit Center")
+    st.subheader("🎯 Management Budget Targets by Profit Center")
     budget_query = """
         SELECT 
             b.Profit_Center,
-            pc.Profit_Center_Name,
-            pc.Business_Unit,
+            COALESCE(pc.Profit_Center_Name, b.Profit_Center) AS Profit_Center_Name,
+            COALESCE(pc.Business_Unit, 'Corporate') AS Business_Unit,
             SUM(b.Budget_Revenue) AS Total_Budget_Revenue,
             SUM(b.Budget_Cost) AS Total_Budget_Cost,
             SUM(b.Budget_Profit) AS Total_Budget_Profit,

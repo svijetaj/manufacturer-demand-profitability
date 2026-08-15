@@ -1,0 +1,55 @@
+# Findings planted in the generated data.
+# Do NOT paste this file into an agent prompt - that makes the eval a memory test.
+# Scoring: the agent gets credit when its output independently names the finding.
+
+findings:
+  - id: F1
+    name: rebate_trap
+    entity: CUST-101
+    summary: >
+      Vantage Wholesale Club sits mid-pack on gross margin but is the worst
+      customer on net margin once the off-invoice rebate and prepaid freight
+      are applied. Gross-margin reporting hides it entirely.
+    must_mention: [CUST-101, rebate, net margin]
+    weight: 2
+
+  - id: F2
+    name: unpassed_cost_spike
+    entity: SKU-2003
+    summary: >
+      rPET input cost steps up sharply mid-series and stays there. Average
+      selling price on the rPET cold cups barely moves, so margin erodes from
+      that month onward.
+    must_mention: [rPET, price, margin erosion]
+    weight: 2
+
+  - id: F3
+    name: cost_to_serve
+    entity: cup/bowl families
+    summary: >
+      Freight is cube-driven. Bulky low-value families carry roughly 2-3x the
+      freight burden per revenue dollar of dense families. Weight-based or
+      flat-rate allocation misses this.
+    must_mention: [freight, cube, cup]
+    weight: 1
+
+  - id: F4
+    name: allocation_flip
+    entity: SKU-1004, SKU-1005
+    summary: >
+      Switching the overhead basis from units produced to machine hours moves
+      the bowl SKUs from mid-pack to worst and moves plates the other way.
+      Neither basis is correct - it is a human judgement that changes which
+      SKUs look worth keeping.
+    must_mention: [overhead, allocation basis, machine hours]
+    weight: 3
+    human_in_loop: true
+
+  - id: F5
+    name: dirty_rows
+    entity: fact_order_lines
+    summary: >
+      Nine exact duplicate order lines and fourteen unflagged negative-quantity
+      returns. An agent that does not reconcile row counts overstates revenue.
+    must_mention: [duplicate, return]
+    weight: 2

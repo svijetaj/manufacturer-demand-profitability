@@ -50,9 +50,10 @@ st.markdown("""
 st.sidebar.title("🎛️ Filters & Controls")
 st.sidebar.caption("Filter data across all analytical pages.")
 
-# Date Range Picker
-min_date = datetime.date(2025, 1, 1)
-max_date = datetime.date(2026, 12, 31)
+# Date Range Picker (dynamic bounds from dataset)
+date_bounds = query_df("SELECT MIN(Transaction_Date) AS min_d, MAX(Transaction_Date) AS max_d FROM vw_line_margin;").iloc[0]
+min_date = datetime.date.fromisoformat(str(date_bounds['min_d']))
+max_date = datetime.date.fromisoformat(str(date_bounds['max_d']))
 
 date_range = st.sidebar.date_input(
     "📅 Date Range:",
@@ -77,7 +78,7 @@ regions = query_df("SELECT DISTINCT Sales_Region FROM Dim_Customer ORDER BY 1;")
 selected_regions = st.sidebar.multiselect("🌍 Sales Regions:", options=regions, default=[])
 
 st.sidebar.markdown("---")
-st.sidebar.info("💡 **DuckDB Engine Active**\nConnecting to `finance.duckdb`.\nSpanning 5,000 transactions (2025–2026).")
+st.sidebar.info("💡 **Semantic Layer & DuckDB Active**\nConnecting to `finance.duckdb`.\nPowered by driver-based synthetic engine & SQL semantic views.")
 
 # 3. Main Navigation Header & Tabs
 st.title("💼 Enterprise Demand & Profit Intelligence Platform")

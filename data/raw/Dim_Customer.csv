@@ -1,0 +1,121 @@
+Customer_ID,Customer_Name,Customer_Type,Customer_Segment,Industry,Sales_Region,Country,State,City,Parent_Customer,Sales_Rep_ID,Payment_Terms_Days,Base_Discount_Pct
+C00001,Customer 1,Distributor,Enterprise,Distribution,Midwest,USA,IL,City 1,,SR001,30,0.324
+C00002,Customer 2,Food Service,Enterprise,Hospitality,Northeast,USA,PA,City 2,,SR002,45,0.1464
+C00003,Customer 3,Retail,Enterprise,Restaurants,South,USA,TX,City 3,,SR003,60,0.06
+C00004,Customer 4,Wholesale,Enterprise,Retail,West,USA,WA,City 4,,SR004,30,0.2446
+C00005,Customer 5,Distributor,Enterprise,Distribution,Midwest,USA,IL,City 5,,SR005,45,0.3027
+C00006,Customer 6,Food Service,Enterprise,Hospitality,Northeast,USA,PA,City 6,,SR006,60,0.1533
+C00007,Customer 7,Retail,Enterprise,Restaurants,South,USA,TX,City 7,,SR007,30,0.2304
+C00008,Customer 8,Wholesale,Enterprise,Retail,West,USA,WA,City 8,,SR008,45,0.2725
+C00009,Customer 9,Distributor,Enterprise,Distribution,Midwest,USA,IL,City 9,,SR009,60,0.3054
+C00010,Customer 10,Food Service,Enterprise,Hospitality,Northeast,USA,PA,City 10,,SR010,30,0.1719
+C00011,Customer 11,Retail,Enterprise,Restaurants,South,USA,TX,City 11,,SR011,45,0.1922
+C00012,Customer 12,Wholesale,Enterprise,Retail,West,USA,WA,City 12,,SR012,60,0.2504
+C00013,Customer 13,Distributor,Enterprise,Distribution,Midwest,USA,IL,City 13,,SR013,30,0.2861
+C00014,Customer 14,Food Service,Enterprise,Hospitality,Northeast,USA,PA,City 14,,SR014,45,0.1442
+C00015,Customer 15,Retail,Enterprise,Restaurants,South,USA,TX,City 15,,SR015,60,0.1893
+C00016,Customer 16,Wholesale,Mid-Market,Retail,West,USA,WA,City 16,,SR016,30,0.2695
+C00017,Customer 17,Distributor,Mid-Market,Distribution,Midwest,USA,IL,City 17,,SR017,45,0.2967
+C00018,Customer 18,Food Service,Mid-Market,Hospitality,Northeast,USA,PA,City 18,,SR018,60,0.1279
+C00019,Customer 19,Retail,Mid-Market,Restaurants,South,USA,TX,City 19,,SR019,30,0.1948
+C00020,Customer 20,Wholesale,Mid-Market,Retail,West,USA,WA,City 20,,SR020,45,0.2647
+C00021,Customer 21,Distributor,Mid-Market,Distribution,Midwest,USA,IL,City 21,,SR021,60,0.3126
+C00022,Customer 22,Food Service,Mid-Market,Hospitality,Northeast,USA,PA,City 22,,SR022,30,0.18
+C00023,Customer 23,Retail,Mid-Market,Restaurants,South,USA,TX,City 23,,SR023,45,0.2537
+C00024,Customer 24,Wholesale,Mid-Market,Retail,West,USA,WA,City 24,,SR024,60,0.2662
+C00025,Customer 25,Distributor,Mid-Market,Distribution,Midwest,USA,IL,City 25,,SR001,30,0.2852
+C00026,Customer 26,Food Service,Mid-Market,Hospitality,Northeast,USA,PA,City 26,,SR002,45,0.118
+C00027,Customer 27,Retail,Mid-Market,Restaurants,South,USA,TX,City 27,,SR003,60,0.214
+C00028,Customer 28,Wholesale,Mid-Market,Retail,West,USA,WA,City 28,,SR004,30,0.2478
+C00029,Customer 29,Distributor,Mid-Market,Distribution,Midwest,USA,IL,City 29,,SR005,45,0.2938
+C00030,Customer 30,Food Service,Mid-Market,Hospitality,Northeast,USA,PA,City 30,,SR006,60,0.1408
+C00031,Customer 31,Retail,Mid-Market,Restaurants,South,USA,TX,City 31,,SR007,30,0.2079
+C00032,Customer 32,Wholesale,Mid-Market,Retail,West,USA,WA,City 32,,SR008,45,0.276
+C00033,Customer 33,Distributor,Mid-Market,Distribution,Midwest,USA,IL,City 33,,SR009,60,0.3024
+C00034,Customer 34,Food Service,Mid-Market,Hospitality,Northeast,USA,PA,City 34,,SR010,30,0.1476
+C00035,Customer 35,Retail,Mid-Market,Restaurants,South,USA,TX,City 35,,SR011,45,0.1945
+C00036,Customer 36,Wholesale,Mid-Market,Retail,West,USA,WA,City 36,,SR012,60,0.2349
+C00037,Customer 37,Distributor,Mid-Market,Distribution,Midwest,USA,IL,City 37,,SR013,30,0.2927
+C00038,Customer 38,Food Service,Mid-Market,Hospitality,Northeast,USA,PA,City 38,,SR014,45,0.1492
+C00039,Customer 39,Retail,Mid-Market,Restaurants,South,USA,TX,City 39,,SR015,60,0.2365
+C00040,Customer 40,Wholesale,Mid-Market,Retail,West,USA,WA,City 40,,SR016,30,0.262
+C00041,Customer 41,Distributor,Mid-Market,Distribution,Midwest,USA,IL,City 41,,SR017,45,0.3147
+C00042,Customer 42,Food Service,Mid-Market,Hospitality,Northeast,USA,PA,City 42,,SR018,60,0.1425
+C00043,Customer 43,Retail,Mid-Market,Restaurants,South,USA,TX,City 43,,SR019,30,0.1922
+C00044,Customer 44,Wholesale,Mid-Market,Retail,West,USA,WA,City 44,,SR020,45,0.2455
+C00045,Customer 45,Distributor,Mid-Market,Distribution,Midwest,USA,IL,City 45,,SR021,60,0.2891
+C00046,Customer 46,Food Service,Mid-Market,Hospitality,Northeast,USA,PA,City 46,,SR022,30,0.1819
+C00047,Customer 47,Retail,Mid-Market,Restaurants,South,USA,TX,City 47,,SR023,45,0.1977
+C00048,Customer 48,Wholesale,Mid-Market,Retail,West,USA,WA,City 48,,SR024,60,0.2726
+C00049,Customer 49,Distributor,Mid-Market,Distribution,Midwest,USA,IL,City 49,,SR001,30,0.2865
+C00050,Customer 50,Food Service,Mid-Market,Hospitality,Northeast,USA,PA,City 50,,SR002,45,0.164
+C00051,Customer 51,Retail,Mid-Market,Restaurants,South,USA,TX,City 51,,SR003,60,0.2158
+C00052,Customer 52,Wholesale,Mid-Market,Retail,West,USA,WA,City 52,,SR004,30,0.2577
+C00053,Customer 53,Distributor,Mid-Market,Distribution,Midwest,USA,IL,City 53,,SR005,45,0.2994
+C00054,Customer 54,Food Service,Mid-Market,Hospitality,Northeast,USA,PA,City 54,,SR006,60,0.1402
+C00055,Customer 55,Retail,SMB,Restaurants,South,USA,TX,City 55,,SR007,30,0.2167
+C00056,Customer 56,Wholesale,SMB,Retail,West,USA,WA,City 56,,SR008,45,0.2532
+C00057,Customer 57,Distributor,SMB,Distribution,Midwest,USA,IL,City 57,,SR009,60,0.2816
+C00058,Customer 58,Food Service,SMB,Hospitality,Northeast,USA,PA,City 58,,SR010,30,0.1308
+C00059,Customer 59,Retail,SMB,Restaurants,South,USA,TX,City 59,,SR011,45,0.2126
+C00060,Customer 60,Wholesale,SMB,Retail,West,USA,WA,City 60,,SR012,60,0.2837
+C00061,Customer 61,Distributor,SMB,Distribution,Midwest,USA,IL,City 61,,SR013,30,0.3024
+C00062,Customer 62,Food Service,SMB,Hospitality,Northeast,USA,PA,City 62,,SR014,45,0.1482
+C00063,Customer 63,Retail,SMB,Restaurants,South,USA,TX,City 63,,SR015,60,0.2143
+C00064,Customer 64,Wholesale,SMB,Retail,West,USA,WA,City 64,,SR016,30,0.2796
+C00065,Customer 65,Distributor,SMB,Distribution,Midwest,USA,IL,City 65,,SR017,45,0.3033
+C00066,Customer 66,Food Service,SMB,Hospitality,Northeast,USA,PA,City 66,,SR018,60,0.1438
+C00067,Customer 67,Retail,SMB,Restaurants,South,USA,TX,City 67,,SR019,30,0.2266
+C00068,Customer 68,Wholesale,SMB,Retail,West,USA,WA,City 68,,SR020,45,0.2664
+C00069,Customer 69,Distributor,SMB,Distribution,Midwest,USA,IL,City 69,,SR021,60,0.323
+C00070,Customer 70,Food Service,SMB,Hospitality,Northeast,USA,PA,City 70,,SR022,30,0.1527
+C00071,Customer 71,Retail,SMB,Restaurants,South,USA,TX,City 71,,SR023,45,0.1916
+C00072,Customer 72,Wholesale,SMB,Retail,West,USA,WA,City 72,,SR024,60,0.2395
+C00073,Customer 73,Distributor,SMB,Distribution,Midwest,USA,IL,City 73,,SR001,30,0.3248
+C00074,Customer 74,Food Service,SMB,Hospitality,Northeast,USA,PA,City 74,,SR002,45,0.1759
+C00075,Customer 75,Retail,SMB,Restaurants,South,USA,TX,City 75,,SR003,60,0.2073
+C00076,Customer 76,Wholesale,SMB,Retail,West,USA,WA,City 76,,SR004,30,0.2543
+C00077,Customer 77,Distributor,SMB,Distribution,Midwest,USA,IL,City 77,,SR005,45,0.3219
+C00078,Customer 78,Food Service,SMB,Hospitality,Northeast,USA,PA,City 78,,SR006,60,0.1334
+C00079,Customer 79,Retail,SMB,Restaurants,South,USA,TX,City 79,,SR007,30,0.1966
+C00080,Customer 80,Wholesale,SMB,Retail,West,USA,WA,City 80,,SR008,45,0.2696
+C00081,Customer 81,Distributor,SMB,Distribution,Midwest,USA,IL,City 81,,SR009,60,0.2941
+C00082,Customer 82,Food Service,SMB,Hospitality,Northeast,USA,PA,City 82,,SR010,30,0.1499
+C00083,Customer 83,Retail,SMB,Restaurants,South,USA,TX,City 83,,SR011,45,0.2075
+C00084,Customer 84,Wholesale,SMB,Retail,West,USA,WA,City 84,,SR012,60,0.2651
+C00085,Customer 85,Distributor,SMB,Distribution,Midwest,USA,IL,City 85,,SR013,30,0.3211
+C00086,Customer 86,Food Service,SMB,Hospitality,Northeast,USA,PA,City 86,,SR014,45,0.1514
+C00087,Customer 87,Retail,SMB,Restaurants,South,USA,TX,City 87,,SR015,60,0.2197
+C00088,Customer 88,Wholesale,SMB,Retail,West,USA,WA,City 88,,SR016,30,0.2292
+C00089,Customer 89,Distributor,SMB,Distribution,Midwest,USA,IL,City 89,,SR017,45,0.2993
+C00090,Customer 90,Food Service,SMB,Hospitality,Northeast,USA,PA,City 90,,SR018,60,0.1374
+C00091,Customer 91,Retail,SMB,Restaurants,South,USA,TX,City 91,,SR019,30,0.1917
+C00092,Customer 92,Wholesale,SMB,Retail,West,USA,WA,City 92,,SR020,45,0.2468
+C00093,Customer 93,Distributor,SMB,Distribution,Midwest,USA,IL,City 93,,SR021,60,0.295
+C00094,Customer 94,Food Service,SMB,Hospitality,Northeast,USA,PA,City 94,,SR022,30,0.1637
+C00095,Customer 95,Retail,SMB,Restaurants,South,USA,TX,City 95,,SR023,45,0.1901
+C00096,Customer 96,Wholesale,SMB,Retail,West,USA,WA,City 96,,SR024,60,0.2605
+C00097,Customer 97,Distributor,SMB,Distribution,Midwest,USA,IL,City 97,,SR001,30,0.2927
+C00098,Customer 98,Food Service,SMB,Hospitality,Northeast,USA,PA,City 98,,SR002,45,0.1451
+C00099,Customer 99,Retail,SMB,Restaurants,South,USA,TX,City 99,,SR003,60,0.225
+C00100,Customer 100,Wholesale,SMB,Retail,West,USA,WA,City 100,,SR004,30,0.2681
+C00101,Customer 101,Distributor,SMB,Distribution,Midwest,USA,IL,City 101,,SR005,45,0.3201
+C00102,Customer 102,Food Service,SMB,Hospitality,Northeast,USA,PA,City 102,,SR006,60,0.1477
+C00103,Customer 103,Retail,SMB,Restaurants,South,USA,TX,City 103,,SR007,30,0.1996
+C00104,Customer 104,Wholesale,SMB,Retail,West,USA,WA,City 104,,SR008,45,0.2566
+C00105,Customer 105,Distributor,SMB,Distribution,Midwest,USA,IL,City 105,,SR009,60,0.3036
+C00106,Customer 106,Food Service,SMB,Hospitality,Northeast,USA,PA,City 106,,SR010,30,0.1526
+C00107,Customer 107,Retail,SMB,Restaurants,South,USA,TX,City 107,,SR011,45,0.1937
+C00108,Customer 108,Wholesale,SMB,Retail,West,USA,WA,City 108,,SR012,60,0.2614
+C00109,Customer 109,Distributor,SMB,Distribution,Midwest,USA,IL,City 109,,SR013,30,0.3034
+C00110,Customer 110,Food Service,SMB,Hospitality,Northeast,USA,PA,City 110,,SR014,45,0.1878
+C00111,Customer 111,Retail,SMB,Restaurants,South,USA,TX,City 111,,SR015,60,0.2382
+C00112,Customer 112,Wholesale,SMB,Retail,West,USA,WA,City 112,,SR016,30,0.2472
+C00113,Customer 113,Distributor,SMB,Distribution,Midwest,USA,IL,City 113,,SR017,45,0.2957
+C00114,Customer 114,Food Service,SMB,Hospitality,Northeast,USA,PA,City 114,,SR018,60,0.128
+C00115,Customer 115,Retail,SMB,Restaurants,South,USA,TX,City 115,,SR019,30,0.2011
+C00116,Customer 116,Wholesale,SMB,Retail,West,USA,WA,City 116,,SR020,45,0.2647
+C00117,Customer 117,Distributor,SMB,Distribution,Midwest,USA,IL,City 117,,SR021,60,0.3181
+C00118,Customer 118,Food Service,SMB,Hospitality,Northeast,USA,PA,City 118,,SR022,30,0.1391
+C00119,Customer 119,Retail,SMB,Restaurants,South,USA,TX,City 119,,SR023,45,0.2002
+C00120,Customer 120,Wholesale,SMB,Retail,West,USA,WA,City 120,,SR024,60,0.2278
