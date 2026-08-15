@@ -6,41 +6,27 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-from src.db import query_df
+from src.db import query_df, build_where_clause
 
 def render_overview(date_range, selected_categories, selected_segments, selected_regions):
     st.markdown("## 📊 Executive Overview")
     st.caption("High-level financial performance, demand volume, and corporate KPIs powered by the unified semantic layer.")
 
-    # Filter clause construction
-    where_clauses = [
-        f"Transaction_Date BETWEEN '{date_range[0]}' AND '{date_range[1]}'"
-    ]
-    if selected_categories:
-        cats = "', '".join(selected_categories)
-        where_clauses.append(f"Product_Category IN ('{cats}')")
-    if selected_segments:
-        segs = "', '".join(selected_segments)
-        where_clauses.append(f"Customer_Segment IN ('{segs}')")
-    if selected_regions:
-        regs = "', '".join(selected_regions)
-        where_clauses.append(f"Sales_Region IN ('{regs}')")
-    
-    where_sql = " AND ".join(where_clauses)
+    where_sql = build_where_clause(date_range, selected_categories, selected_segments, selected_regions, prefix="m.")
 
     # 1. Fetch KPI Summary Metrics
     kpi_query = f"""
         SELECT 
-            SUM(Gross_Sales_Amount) AS Total_Gross_Sales,
-            SUM(Net_Sales_Amount) AS Total_Net_Sales,
-            SUM(Quantity_Sold) AS Total_Units,
-            SUM(Gross_Profit) AS Total_Gross_Profit,
-            SUM(Contribution_Margin) AS Total_Contribution_Margin,
-            (SUM(Gross_Profit) / NULLIF(SUM(Net_Sales_Amount), 0)) * 100 AS Gross_Margin_Pct,
-            (SUM(Contribution_Margin) / NULLIF(SUM(Net_Sales_Amount), 0)) * 100 AS Pocket_Margin_Pct,
-            COUNT(DISTINCT Order_ID) AS Total_Orders,
-            COUNT(DISTINCT Customer_ID) AS Active_Customers
-        FROM vw_line_margin
+            SUM(m.Gross_Sales_Amount) AS Total_Gross_Sales,
+            SUM(m.Net_Sales_Amount) AS Total_Net_Sales,
+            SUM(m.Quantity_Sold) AS Total_Units,
+            SUM(m.Gross_Profit) AS Total_Gross_Profit,
+            SUM(m.Contribution_Margin) AS Total_Contribution_Margin,
+            (SUM(m.Gross_Profit) / NULLIF(SUM(m.Net_Sales_Amount), 0)) * 100 AS Gross_Margin_Pct,
+            (SUM(m.Contribution_Margin) / NULLIF(SUM(m.Net_Sales_Amount), 0)) * 100 AS Pocket_Margin_Pct,
+            COUNT(DISTINCT m.Order_ID) AS Total_Orders,
+            COUNT(DISTINCT m.Customer_ID) AS Active_Customers
+        FROM vw_line_margin m
         WHERE {where_sql};
     """
     kpis = query_df(kpi_query).iloc[0]
@@ -68,11 +54,11 @@ def render_overview(date_range, selected_categories, selected_segments, selected
         st.subheader("📅 Monthly Revenue & Margin Trend")
         trend_query = f"""
             SELECT 
-                period AS Year_Month,
-                SUM(Net_Sales_Amount) AS Net_Sales,
-                SUM(Gross_Profit) AS Gross_Profit,
-                SUM(Contribution_Margin) AS Contribution_Margin
-            FROM vw_line_margin
+                m.period AS Year_Month,
+                SUM(m.Net_Sales_Amount) AS Net_Sales,
+                SUM(m.Gross_Profit) AS Gross_Profit,
+                SUM(m.Contribution_Margin) AS Contribution_Margin
+            FROM vw_line_margin m
             WHERE {where_sql}
             GROUP BY 1
             ORDER BY 1;
@@ -97,10 +83,10 @@ def render_overview(date_range, selected_categories, selected_segments, selected
         st.subheader("🌍 Regional Revenue Share")
         reg_query = f"""
             SELECT 
-                Sales_Region,
-                SUM(Net_Sales_Amount) AS Net_Sales,
-                SUM(Quantity_Sold) AS Quantity_Sold
-            FROM vw_line_margin
+                m.Sales_Region,
+                SUM(m.Net_Sales_Amount) AS Net_Sales,
+                SUM(m.Quantity_Sold) AS Quantity_Sold
+            FROM vw_line_margin m
             WHERE {where_sql}
             GROUP BY 1
             ORDER BY Net_Sales DESC;

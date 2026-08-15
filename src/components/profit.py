@@ -6,41 +6,28 @@ import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
-from src.db import query_df
+from src.db import query_df, build_where_clause
 
 def render_profit(date_range, selected_categories, selected_segments, selected_regions):
     st.markdown("## 💰 Profit Waterfall & Financial Margins")
     st.caption("Deconstruct the full financial waterfall from Gross Revenue down to Pocket Contribution Margin.")
 
-    where_clauses = [
-        f"Transaction_Date BETWEEN '{date_range[0]}' AND '{date_range[1]}'"
-    ]
-    if selected_categories:
-        cats = "', '".join(selected_categories)
-        where_clauses.append(f"Product_Category IN ('{cats}')")
-    if selected_segments:
-        segs = "', '".join(selected_segments)
-        where_clauses.append(f"Customer_Segment IN ('{segs}')")
-    if selected_regions:
-        regs = "', '".join(selected_regions)
-        where_clauses.append(f"Sales_Region IN ('{regs}')")
-    
-    where_sql = " AND ".join(where_clauses)
+    where_sql = build_where_clause(date_range, selected_categories, selected_segments, selected_regions, prefix="m.")
 
     # 1. Fetch Aggregated Waterfall Data from vw_line_margin
     wf_query = f"""
         SELECT 
-            SUM(Gross_Sales_Amount) AS Gross_Sales,
-            SUM(Discount_Amount) AS Discounts,
-            SUM(Returns_Amount) AS Returns,
-            SUM(Net_Sales_Amount) AS Net_Sales,
-            SUM(Material_Cost) AS Material_Cost,
-            SUM(Labor_Cost) AS Labor_Cost,
-            SUM(Gross_Profit) AS Gross_Profit,
-            SUM(Freight_Cost) AS Freight_Cost,
-            SUM(Rebate_Amount) AS Rebates,
-            SUM(Contribution_Margin) AS Contribution_Margin
-        FROM vw_line_margin
+            SUM(m.Gross_Sales_Amount) AS Gross_Sales,
+            SUM(m.Discount_Amount) AS Discounts,
+            SUM(m.Returns_Amount) AS Returns,
+            SUM(m.Net_Sales_Amount) AS Net_Sales,
+            SUM(m.Material_Cost) AS Material_Cost,
+            SUM(m.Labor_Cost) AS Labor_Cost,
+            SUM(m.Gross_Profit) AS Gross_Profit,
+            SUM(m.Freight_Cost) AS Freight_Cost,
+            SUM(m.Rebate_Amount) AS Rebates,
+            SUM(m.Contribution_Margin) AS Contribution_Margin
+        FROM vw_line_margin m
         WHERE {where_sql};
     """
     wf = query_df(wf_query).iloc[0]

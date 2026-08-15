@@ -40,6 +40,23 @@ def list_tables_and_views() -> pd.DataFrame:
     """
     return query_df(sql)
 
+def build_where_clause(date_range, selected_categories=None, selected_segments=None, selected_regions=None, prefix="m.") -> str:
+    """Builds a SQL WHERE clause with explicit table alias prefixes to avoid ambiguity."""
+    where_clauses = [
+        f"{prefix}Transaction_Date BETWEEN '{date_range[0]}' AND '{date_range[1]}'"
+    ]
+    if selected_categories:
+        cats = "', '".join(selected_categories)
+        where_clauses.append(f"{prefix}Product_Category IN ('{cats}')")
+    if selected_segments:
+        segs = "', '".join(selected_segments)
+        where_clauses.append(f"{prefix}Customer_Segment IN ('{segs}')")
+    if selected_regions:
+        regs = "', '".join(selected_regions)
+        where_clauses.append(f"{prefix}Sales_Region IN ('{regs}')")
+    return " AND ".join(where_clauses)
+
 if __name__ == "__main__":
     print("Available Tables & Views in finance.duckdb:")
     print(list_tables_and_views())
+

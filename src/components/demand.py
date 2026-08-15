@@ -6,26 +6,13 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-from src.db import query_df
+from src.db import query_df, build_where_clause
 
 def render_demand(date_range, selected_categories, selected_segments, selected_regions):
     st.markdown("## 📦 Demand & Volume Analytics")
     st.caption("Detailed breakdown of order volume (`Quantity_Sold`), price elasticity, customer buying behaviors, and seasonal cycles.")
 
-    where_clauses = [
-        f"Transaction_Date BETWEEN '{date_range[0]}' AND '{date_range[1]}'"
-    ]
-    if selected_categories:
-        cats = "', '".join(selected_categories)
-        where_clauses.append(f"Product_Category IN ('{cats}')")
-    if selected_segments:
-        segs = "', '".join(selected_segments)
-        where_clauses.append(f"Customer_Segment IN ('{segs}')")
-    if selected_regions:
-        regs = "', '".join(selected_regions)
-        where_clauses.append(f"Sales_Region IN ('{regs}')")
-    
-    where_sql = " AND ".join(where_clauses)
+    where_sql = build_where_clause(date_range, selected_categories, selected_segments, selected_regions, prefix="m.")
 
     # 1. Demand Time-Series Aggregation Level
     c1, c2 = st.columns([8, 2])
@@ -35,20 +22,20 @@ def render_demand(date_range, selected_categories, selected_segments, selected_r
         granularity = st.selectbox("Time Aggregation:", ["Monthly", "Weekly", "Daily"], index=0)
 
     if granularity == "Monthly":
-        group_col = "period"
+        group_col = "m.period"
     elif granularity == "Weekly":
-        group_col = "strftime(CAST(Transaction_Date AS DATE), '%Y-W%W')"
+        group_col = "strftime(CAST(m.Transaction_Date AS DATE), '%Y-W%W')"
     else:
-        group_col = "CAST(Transaction_Date AS VARCHAR)"
+        group_col = "CAST(m.Transaction_Date AS VARCHAR)"
 
     demand_trend_query = f"""
         SELECT 
             {group_col} AS Time_Period,
-            Product_Category,
-            SUM(Quantity_Sold) AS Total_Units,
-            SUM(Net_Sales_Amount) / NULLIF(SUM(Quantity_Sold), 0) AS Avg_Unit_Price,
-            SUM(Net_Sales_Amount) AS Net_Sales
-        FROM vw_line_margin
+            m.Product_Category,
+            SUM(m.Quantity_Sold) AS Total_Units,
+            SUM(m.Net_Sales_Amount) / NULLIF(SUM(m.Quantity_Sold), 0) AS Avg_Unit_Price,
+            SUM(m.Net_Sales_Amount) AS Net_Sales
+        FROM vw_line_margin m
         WHERE {where_sql}
         GROUP BY 1, 2
         ORDER BY 1;
@@ -81,10 +68,10 @@ def render_demand(date_range, selected_categories, selected_segments, selected_r
         st.subheader("🗓️ Seasonality Matrix (Demand by Month)")
         season_query = f"""
             SELECT 
-                strftime(CAST(Transaction_Date AS DATE), '%B') AS Month_Name,
-                CAST(strftime(CAST(Transaction_Date AS DATE), '%m') AS INTEGER) AS Month_Num,
-                SUM(Quantity_Sold) AS Total_Units
-            FROM vw_line_margin
+                strftime(CAST(m.Transaction_Date AS DATE), '%B') AS Month_Name,
+                CAST(strftime(CAST(m.Transaction_Date AS DATE), '%m') AS INTEGER) AS Month_Num,
+                SUM(m.Quantity_Sold) AS Total_Units
+            FROM vw_line_margin m
             WHERE {where_sql}
             GROUP BY 1, 2
             ORDER BY Month_Num;
@@ -106,10 +93,10 @@ def render_demand(date_range, selected_categories, selected_segments, selected_r
         st.subheader("👥 Demand by Customer Segment & Type")
         seg_demand_query = f"""
             SELECT 
-                Customer_Segment,
-                Customer_Type,
-                SUM(Quantity_Sold) AS Total_Units
-            FROM vw_line_margin
+                m.Customer_Segment,
+                m.Customer_Type,
+                SUM(m.Quantity_Sold) AS Total_Units
+            FROM vw_line_margin m
             WHERE {where_sql}
             GROUP BY 1, 2
             ORDER BY Total_Units DESC;
@@ -135,13 +122,13 @@ def render_demand(date_range, selected_categories, selected_segments, selected_r
 
     elasticity_query = f"""
         SELECT 
-            (Net_Sales_Amount / NULLIF(Quantity_Sold, 0)) AS Realized_Unit_Price,
-            (Discount_Amount / NULLIF(Gross_Sales_Amount, 0)) * 100 AS Discount_Pct,
-            Quantity_Sold,
-            Product_Category,
-            Customer_Segment
-        FROM vw_line_margin
-        WHERE {where_sql} AND Quantity_Sold > 0
+            (m.Net_Sales_Amount / NULLIF(m.Quantity_Sold, 0)) AS Realized_Unit_Price,
+            (m.Discount_Amount / NULLIF(m.Gross_Sales_Amount, 0)) * 100 AS Discount_Pct,
+            m.Quantity_Sold,
+            m.Product_Category,
+            m.Customer_Segment
+        FROM vw_line_margin m
+        WHERE {where_sql} AND m.Quantity_Sold > 0
         LIMIT 1000;
     """
     df_elasticity = query_df(elasticity_query)
