@@ -1,6 +1,6 @@
-# Finance Data Model - Entity Relationship (ER) Diagram
+# Finance Data Model — Entity Relationship (ER) Diagram
 
-This document contains the complete Entity-Relationship schema for all Dimension and Fact tables in the `DIM_FACT_TABLES` dataset.
+This document contains the complete Entity-Relationship schema for all Dimension, Fact, and Reference tables in the analytical data model.
 
 ---
 
@@ -28,18 +28,22 @@ erDiagram
         string Product_ID PK "e.g. P0001"
         string Product_Code
         string Product_Name
-        string Product_Category "Paper Plates, Cups, Bowls"
+        string Product_Category "Paper Plates, Cups, Bowls, Containers, Cutlery"
         string Product_Subcategory "Standard, Premium, Heavy Duty"
         string Brand "EcoServe, PurePack, EarthWare"
         string SKU
         string Product_Line
-        date Launch_Date
-        string Discontinued_Flag "Y/N"
+        string Plant_ID FK
+        double Unit_Weight_G
+        double Cube_Index
+        string Material_Type
+        string Launch_Date
+        string Discontinued_Flag
     }
 
     Dim_Date {
         int Date_Key PK "e.g. 20250101"
-        date Date "YYYY-MM-DD"
+        string Date "YYYY-MM-DD"
         int Day
         int Week
         string Month
@@ -61,12 +65,12 @@ erDiagram
     }
 
     Dim_Rebate_Program {
-        string Rebate_Program_ID PK "e.g. RP001"
+        string Customer_ID PK "FK to Dim_Customer"
+        string Rebate_Program_ID "e.g. RP001"
         string Rebate_Program_Name
         string Rebate_Type "Volume, Growth, Promotional"
-        date Start_Date
-        date End_Date
-        string Status "Active, Inactive"
+        double Rebate_Rate
+        double Threshold_Amount
     }
 
     Dim_Profit_Center {
@@ -90,6 +94,13 @@ erDiagram
         string Country
     }
 
+    Ref_Material_Cost {
+        string Plant_ID PK
+        string Month PK
+        string Material_Type PK
+        double Cost_Per_KG
+    }
+
     %% ========================================================
     %% FACT TABLES
     %% ========================================================
@@ -97,143 +108,97 @@ erDiagram
         string Transaction_ID PK "e.g. T0000001"
         string Order_ID
         string Invoice_ID
-        string Invoice_Line_ID "IL0000001"
-        date Transaction_Date FK
-        date Posting_Date FK
+        string Invoice_Line_ID
+        string Transaction_Date FK
         string Customer_ID FK
         string Product_ID FK
-        string Sales_Org
-        string Business_Unit
-        string Region_ID
-        string Currency_Code
-        int Quantity_Sold "DEMAND TARGET"
-        float Gross_Sales_Amount
-        float Discount_Amount
-        float Net_Sales_Amount
-        float Returns_Amount
-        float Rebate_Amount
-        float Freight_Revenue
-        float Tax_Amount
-        float COGS_Amount
+        string Sales_Rep_ID FK
+        double Quantity_Sold
+        double List_Unit_Price
+        double Gross_Sales_Amount
+        double Discount_Amount
+        double Returns_Amount
+        double Net_Sales_Amount
     }
 
     Fact_COGS {
-        string Transaction_ID FK "T0000001"
-        string Product_ID FK
+        string Transaction_ID PK "FK to Fact_Sales"
+        string Production_Date
         string Plant_ID
-        string Material_ID
-        float Standard_Cost
-        float Actual_Cost
-        float Material_Cost
-        float Labor_Cost
-        float Overhead_Cost
-        float Freight_Cost
-        float Manufacturing_Cost
-        date Production_Date FK
-        float Cost_Per_Unit
+        string Product_ID FK
+        double Units_Produced
+        double Machine_Hours
+        double Labor_Hours
+        double Material_Cost
+        double Labor_Cost
+        double Total_Direct_COGS
+    }
+
+    Fact_Freight {
+        string Order_ID PK "FK to Fact_Sales.Order_ID"
+        string Ship_Date
+        string Origin_Plant
+        string Destination_Region
+        double Total_Weight_KG
+        double Total_Cube
+        double Freight_Cost
+    }
+
+    Fact_Overhead_Pool {
+        string Plant_ID PK
+        string Month PK
+        double Overhead_Pool_USD
     }
 
     Fact_Commission {
-        string Commission_ID PK "COM0000001"
-        string Transaction_ID FK
-        string Invoice_Line_ID
-        string Sales_Rep_ID FK
-        string Customer_ID FK
-        string Product_ID FK
-        date Commission_Date FK
-        string Commission_Type
-        float Commission_Rate
-        float Commission_Amount
+        string Sales_Rep_ID PK
+        string Month PK
+        double Commissionable_Sales
+        double Commission_Rate
+        double Commission_Amount
     }
 
     Fact_Rebate {
-        string Rebate_ID PK "REB0000001"
-        string Transaction_ID FK
-        string Invoice_Line_ID
-        string Customer_ID FK
-        string Product_ID FK
-        string Rebate_Program_ID FK
-        date Rebate_Date FK
-        string Rebate_Type
-        float Rebate_Rate
-        float Rebate_Amount
+        string Customer_ID PK
+        string Month PK
+        double Eligible_Sales
+        double Rebate_Rate
+        double Rebate_Amount
     }
 
     Fact_Operating_Expense {
-        string Expense_ID PK "EXP0000001"
-        string GL_Account FK
-        string Cost_Center FK
-        string Department
-        date Expense_Date FK
-        string Expense_Type "Operations, SG&A, Sales"
-        string Expense_Category "Administrative, Sales"
-        float Expense_Amount
+        string Expense_ID PK
+        int GL_Account
+        string Cost_Center
+        string Expense_Function
+        string Expense_Date
+        double Expense_Amount
     }
 
     Fact_Budget {
-        string Budget_ID PK "BUD0000001"
-        int Fiscal_Year
-        int Fiscal_Period
-        string Cost_Center FK
-        string Profit_Center FK
-        float Budget_Revenue
-        float Budget_Cost
-        float Budget_Profit
-        float Forecast_Revenue
-        float Forecast_Cost
-    }
-
-    Fact_GL {
-        string Journal_ID PK "JRN0000001"
-        date Posting_Date FK
-        string GL_Account
-        string Account_Type "Revenue, Operating Expense, COGS"
-        string Cost_Center FK
-        string Profit_Center FK
-        float Amount
-        string Currency
-        int Fiscal_Period
-        int Fiscal_Year
+        int Fiscal_Year PK
+        int Fiscal_Period PK
+        string Profit_Center PK
+        string Cost_Center
+        double Budget_Revenue
+        double Budget_Cost
+        double Budget_Profit
+        double Forecast_Revenue
+        double Forecast_Cost
     }
 
     %% ========================================================
     %% RELATIONSHIPS
     %% ========================================================
-    Dim_Customer ||--o{ Fact_Sales : "places orders"
-    Dim_Product ||--o{ Fact_Sales : "is sold in"
-    Dim_Date ||--o{ Fact_Sales : "transaction date"
+    Dim_Customer ||--o{ Fact_Sales : "places"
+    Dim_Product ||--o{ Fact_Sales : "sold_in"
+    Dim_Date ||--o{ Fact_Sales : "occurs_on"
+    Dim_Sales_Rep ||--o{ Fact_Sales : "credited_for"
+    Dim_Customer ||--o{ Dim_Rebate_Program : "governed_by"
 
-    Dim_Product ||--o{ Fact_COGS : "costed per product"
-    Dim_Date ||--o{ Fact_COGS : "production date"
-    Fact_Sales ||--o| Fact_COGS : "1:1 via Transaction_ID"
-
-    Dim_Sales_Rep ||--o{ Fact_Commission : "earns commission"
-    Dim_Customer ||--o{ Fact_Commission : "customer"
-    Dim_Product ||--o{ Fact_Commission : "product"
-    Fact_Sales ||--o| Fact_Commission : "1:1 via Transaction_ID"
-
-    Dim_Rebate_Program ||--o{ Fact_Rebate : "defines terms"
-    Dim_Customer ||--o{ Fact_Rebate : "qualifies customer"
-    Dim_Product ||--o{ Fact_Rebate : "qualifies product"
-    Fact_Sales ||--o| Fact_Rebate : "1:1 via Transaction_ID"
-
-    Dim_Date ||--o{ Fact_Operating_Expense : "expense date"
-    Dim_Date ||--o{ Fact_GL : "posting date"
-    Dim_Profit_Center ||--o{ Fact_GL : "profit center"
-    Dim_Profit_Center ||--o{ Fact_Budget : "budget target"
-    Dim_Profit_Center ||--o{ Dim_Organization : "hierarchy"
+    Fact_Sales ||--|| Fact_COGS : "produces"
+    Fact_Sales }o--|| Fact_Freight : "shipped_under"
+    Dim_Customer ||--o{ Fact_Rebate : "receives"
+    Dim_Sales_Rep ||--o{ Fact_Commission : "earns"
+    Dim_Profit_Center ||--o{ Fact_Budget : "targeted_in"
 ```
-
----
-
-### Data Mapping Summary
-
-| Fact Table | Grain / Primary Key | Foreign Keys | Key Measures |
-| :--- | :--- | :--- | :--- |
-| **Fact_Sales** | `Transaction_ID` | `Customer_ID`, `Product_ID`, `Transaction_Date` | `Quantity_Sold`, `Gross_Sales_Amount`, `Discount_Amount`, `Net_Sales_Amount`, `COGS_Amount` |
-| **Fact_COGS** | `Transaction_ID` | `Product_ID`, `Production_Date` | `Material_Cost`, `Labor_Cost`, `Overhead_Cost`, `Freight_Cost`, `Actual_Cost` |
-| **Fact_Commission** | `Commission_ID` | `Transaction_ID`, `Sales_Rep_ID`, `Customer_ID`, `Product_ID` | `Commission_Rate`, `Commission_Amount` |
-| **Fact_Rebate** | `Rebate_ID` | `Transaction_ID`, `Customer_ID`, `Product_ID`, `Rebate_Program_ID` | `Rebate_Rate`, `Rebate_Amount` |
-| **Fact_Operating_Expense**| `Expense_ID` | `Cost_Center`, `Expense_Date` | `Expense_Amount` |
-| **Fact_Budget** | `Budget_ID` | `Fiscal_Year`, `Fiscal_Period`, `Profit_Center`, `Cost_Center` | `Budget_Revenue`, `Budget_Cost`, `Budget_Profit` |
-| **Fact_GL** | `Journal_ID` | `Posting_Date`, `Profit_Center`, `Cost_Center` | `Amount` |
