@@ -275,16 +275,24 @@ def main():
                        "Expense_Amount": round(rev * share * rng.uniform(.9, 1.1), 2)})
     foe = pd.DataFrame(oe)
 
+    # ---- Fact_Budget, tied to actual revenue by business unit so variance is real
+    bu_by_pc = dpc.set_index("Business_Unit").Profit_Center_ID.to_dict()
+    act = fs.groupby(["Business_Unit", "_m"], as_index=False).Net_Sales_Amount.sum()
+    act["Profit_Center"] = act.Business_Unit.map(bu_by_pc)
+    # each profit centre carries a persistent performance bias: two beat plan, two miss
+    bias = {pc: b for pc, b in zip(sorted(dpc.Profit_Center_ID), [0.91, 1.06, 0.97, 1.12])}
     bud = []
-    for m, rev in net_by_month.items():
-        for pc in dpc.Profit_Center_ID:
-            br = rev / 4 * rng.uniform(.94, 1.08)
-            bud.append({"Fiscal_Year": pd.Timestamp(m).year, "Fiscal_Period": pd.Timestamp(m).month,
-                        "Profit_Center": pc, "Cost_Center": f"CC{rng.integers(1,9):03d}",
-                        "Budget_Revenue": round(br, 2), "Budget_Cost": round(br * .64, 2),
-                        "Budget_Profit": round(br * .36, 2),
-                        "Forecast_Revenue": round(br * rng.uniform(.97, 1.05), 2),
-                        "Forecast_Cost": round(br * .64 * rng.uniform(.97, 1.05), 2)})
+    for r in act.itertuples():
+        # budget was set BEFORE the period, so it is actual / bias plus noise
+        br = r.Net_Sales_Amount / bias[r.Profit_Center] * rng.uniform(.97, 1.03)
+        bud.append({"Fiscal_Year": pd.Timestamp(r._2).year,
+                    "Fiscal_Period": pd.Timestamp(r._2).month,
+                    "Profit_Center": r.Profit_Center, "Business_Unit": r.Business_Unit,
+                    "Cost_Center": f"CC{rng.integers(1,9):03d}",
+                    "Budget_Revenue": round(br, 2), "Budget_Cost": round(br * .64, 2),
+                    "Budget_Profit": round(br * .36, 2),
+                    "Forecast_Revenue": round(br * rng.uniform(.98, 1.06), 2),
+                    "Forecast_Cost": round(br * .64 * rng.uniform(.98, 1.06), 2)})
     fb = pd.DataFrame(bud)
 
     # ---- planted dirty rows (F5) - workstream D should find these
