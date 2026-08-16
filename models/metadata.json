@@ -1,7 +1,7 @@
 {
   "model_version": "1.0.0",
   "algorithm": "HistGradientBoosting Quantile Regressors",
-  "trained_at": "2026-08-16T03:19:48.545026+00:00",
+  "trained_at": "2026-08-16T03:29:21.044320+00:00",
   "data_cutoff_period": "2026-08",
   "training_rows": 10014,
   "features_used": [

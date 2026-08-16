@@ -171,6 +171,25 @@ class DemandForecastPipeline:
         self.model_lower.fit(X_train, y_train)
         self.model_upper.fit(X_train, y_train)
 
+        # Compute accurate Feature Importances via Permutation Importance
+        try:
+            from sklearn.inspection import permutation_importance
+            sample_size = min(len(X_val), 1500)
+            perm_indices = np.random.choice(len(X_val), sample_size, replace=False)
+            perm = permutation_importance(
+                self.model_median, 
+                X_val[perm_indices], 
+                y_val[perm_indices], 
+                n_repeats=5, 
+                random_state=42, 
+                n_jobs=-1
+            )
+            raw_imp = np.maximum(0, perm.importances_mean)
+            total_imp = np.sum(raw_imp) + 1e-8
+            self.feature_importances_ = raw_imp / total_imp
+        except Exception:
+            self.feature_importances_ = np.ones(len(self.feature_names)) / len(self.feature_names)
+
         # Validation Metrics Evaluation
         preds_val = self.model_median.predict(X_val)
         preds_val = np.maximum(0, preds_val)
@@ -209,10 +228,12 @@ class DemandForecastPipeline:
 
     def get_feature_importances(self) -> pd.DataFrame:
         """Extracts normalized feature importance weights from the median model."""
-        if hasattr(self.model_median, 'feature_importances_'):
+        if hasattr(self, 'feature_importances_') and self.feature_importances_ is not None:
+            importances = self.feature_importances_
+        elif hasattr(self.model_median, 'feature_importances_'):
             importances = self.model_median.feature_importances_
         else:
-            importances = np.ones(len(self.feature_names))
+            importances = np.ones(len(self.feature_names)) / len(self.feature_names)
         
         total = np.sum(importances) + 1e-8
         df_imp = pd.DataFrame({
