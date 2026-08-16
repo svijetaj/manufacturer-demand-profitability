@@ -93,7 +93,8 @@ The database loader (`src/load.py`) automatically runs 10 strict assertions prio
 ## 📚 Documentation
 * [Data Dictionary](docs/DATA_DICTIONARY.md)
 * [Data Model Descriptive Report](docs/DATA_MODEL_DESCRIPTIVE_REPORT.md)
-* [Predictive Modeling & ML Specification](docs/PREDICTIVE_MODELING_SPECIFICATION.md)
+* [Predictive Demand Modeling & ML Specification](docs/PREDICTIVE_MODELING_SPECIFICATION.md)
+* [Predictive Profitability & 2-Stage Financial Specification](docs/PROFITABILITY_PREDICTION_SPECIFICATION.md)
 * [Project Scope](docs/SCOPE.md)
 * [Architectural Decisions](docs/DECISIONS.md)
 * [Workstreams & Task Force Breakdown](docs/WORKSTREAMS.md)

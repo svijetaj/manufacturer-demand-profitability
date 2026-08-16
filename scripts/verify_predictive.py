@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 from src.ml.demand_model import (
     load_or_train_model, 
-    generate_forward_forecast,
+    generate_forward_profitability_forecast,
     extract_monthly_demand_dataset
 )
 
@@ -18,7 +18,7 @@ def run_tests():
     print(f"Extracted {len(df_raw)} records across periods {df_raw['period'].min()} to {df_raw['period'].max()}")
     assert not df_raw.empty, "Dataset should not be empty"
     assert 'lag_1_volume' in df_raw.columns, "Lags should be present"
-    assert 'rolling_mean_3m' in df_raw.columns, "Rolling stats should be present"
+    assert 'Material_Cost_Per_Unit' in df_raw.columns, "Unit cost drivers should be present"
 
     print("\n=== 2. Testing Model Loading & Metadata ===")
     start_t = time.time()
@@ -29,41 +29,66 @@ def run_tests():
         meta = json.load(f)
     print("Metadata contents:", json.dumps(meta, indent=2))
 
-    print("\n=== 3. Testing Forward Forecasting (3, 6, 9 Months) ===")
+    print("\n=== 3. Testing Forward Profitability Forecasting (3, 6, 9 Months) ===")
     for h in [3, 6, 9]:
-        df_fc = generate_forward_forecast(pipeline, horizon_months=h)
+        df_fc = generate_forward_profitability_forecast(pipeline, horizon_months=h)
         assert len(df_fc['period'].unique()) == h, f"Expected {h} periods"
-        print(f"Horizon {h}M: {len(df_fc)} rows, periods {df_fc['period'].min()} -> {df_fc['period'].max()}, Total Units: {df_fc['Predicted_Units'].sum():,.0f}")
+        print(f"Horizon {h}M: {len(df_fc)} rows, periods {df_fc['period'].min()} -> {df_fc['period'].max()}, Total Net Sales: ${df_fc['Predicted_Net_Sales'].sum():,.2f}")
 
-    print("\n=== 4. Testing Quantile Prediction Logic (Lower <= Median <= Upper) ===")
-    df_fc6 = generate_forward_forecast(pipeline, horizon_months=6)
+    print("\n=== 4. Testing Strict Quantile Non-Crossing (Lower <= Median <= Upper) ===")
+    df_fc6 = generate_forward_profitability_forecast(pipeline, horizon_months=6)
     invalid_bounds = (df_fc6['Lower_Bound_Units'] > df_fc6['Predicted_Units'] + 1e-3).sum()
     invalid_upper = (df_fc6['Predicted_Units'] > df_fc6['Upper_Bound_Units'] + 1e-3).sum()
     print(f"Invalid lower bound violations: {invalid_bounds}")
     print(f"Invalid upper bound violations: {invalid_upper}")
     assert invalid_bounds == 0 and invalid_upper == 0, "Quantiles must satisfy Lower <= Median <= Upper"
 
-    print("\n=== 5. Testing What-If Scenario Simulations ===")
-    base_fc = generate_forward_forecast(pipeline, horizon_months=6, price_delta_pct=0.0, discount_delta_pct=0.0)
-    price_up_fc = generate_forward_forecast(pipeline, horizon_months=6, price_delta_pct=10.0, discount_delta_pct=0.0)
-    disc_down_fc = generate_forward_forecast(pipeline, horizon_months=6, price_delta_pct=0.0, discount_delta_pct=-5.0)
+    print("\n=== 5. Testing Financial Margin Waterfall Tie-Out ($0.00 Variance Check) ===")
+    gross = df_fc6["Gross_Sales"].sum()
+    disc = df_fc6["Discount_Amount"].sum()
+    net = df_fc6["Predicted_Net_Sales"].sum()
+    mat = df_fc6["Material_Cost"].sum()
+    lab = df_fc6["Labor_Cost"].sum()
+    cogs = df_fc6["Direct_COGS"].sum()
+    gp = df_fc6["Gross_Profit"].sum()
+    freight = df_fc6["Freight_Cost"].sum()
+    rebates = df_fc6["Rebate_Amount"].sum()
+    cm = df_fc6["Contribution_Margin"].sum()
+    oh_u = df_fc6["Allocated_Overhead_Units"].sum()
+    nm_u = df_fc6["Net_Margin_Units_Basis"].sum()
+    oh_h = df_fc6["Allocated_Overhead_Hours"].sum()
+    nm_h = df_fc6["Net_Margin_Hours_Basis"].sum()
 
-    base_rev = base_fc['Predicted_Net_Sales'].sum()
-    price_up_rev = price_up_fc['Predicted_Net_Sales'].sum()
-    disc_down_rev = disc_down_fc['Predicted_Net_Sales'].sum()
+    diff_u = gross - disc - cogs - freight - rebates - oh_u - nm_u
+    diff_h = gross - disc - cogs - freight - rebates - oh_h - nm_h
 
-    print(f"Baseline Revenue:     ${base_rev:,.2f}")
-    print(f"+10% Price Revenue:   ${price_up_rev:,.2f} (Delta: ${price_up_rev - base_rev:+,.2f})")
-    print(f"-5% Discount Revenue: ${disc_down_rev:,.2f} (Delta: ${disc_down_rev - base_rev:+,.2f})")
+    print(f"Gross Sales:         ${gross:,.2f}")
+    print(f"Net Sales:           ${net:,.2f}")
+    print(f"Gross Profit:        ${gp:,.2f}")
+    print(f"Contribution Margin: ${cm:,.2f}")
+    print(f"Net Margin (Units):  ${nm_u:,.2f}")
+    print(f"Net Margin (Hours):  ${nm_h:,.2f}")
+    print(f"Waterfall Discrepancy (Units Basis): ${diff_u:.6f}")
+    print(f"Waterfall Discrepancy (Hours Basis): ${diff_h:.6f}")
 
-    print("\n=== 6. Testing Feature Importance Extraction ===")
-    df_imp = pipeline.get_feature_importances()
-    print("Top 5 Demand Drivers:\n", df_imp.head(5))
+    assert abs(diff_u) < 0.01 and abs(diff_h) < 0.01, "Waterfall must tie out with zero variance!"
+    print(">>> WATERFALL TIES OUT TO THE PENNY ($0.00 VARIANCE) ON BOTH ALLOCATION BASES! <<<")
+
+    print("\n=== 6. Testing Cost Inflation & Price Shock Simulator ===")
+    shock_fc = generate_forward_profitability_forecast(
+        pipeline, horizon_months=6,
+        price_delta_pct=5.0,
+        discount_delta_pct=-2.0,
+        material_inflation_pct=15.0,
+        labor_shift_pct=5.0
+    )
+    print(f"Base Net Margin:     ${df_fc6['Net_Margin_Units_Basis'].sum():,.2f}")
+    print(f"Simulated Shock Net Margin: ${shock_fc['Net_Margin_Units_Basis'].sum():,.2f}")
 
     print("\n=== 7. Testing Component Render Compatibility ===")
     from src.components.predictive import render_predictive
     print("Predictive component imported successfully and verified!")
-    print("\n>>> ALL 7 PREDICTIVE MODELING TESTS PASSED PERFECTLY! <<<")
+    print("\n>>> ALL 7 TESTS PASSED WITH 100% SUCCESS! <<<")
 
 if __name__ == '__main__':
     run_tests()
