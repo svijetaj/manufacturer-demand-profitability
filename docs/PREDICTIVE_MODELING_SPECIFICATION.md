@@ -120,7 +120,92 @@ From `vw_line_margin` in `finance.duckdb`, the feature engineering pipeline gene
 
 ---
 
-## 6. Dashboard Integration Plan (`src/components/predictive.py`)
+## 6. Model Storage, Artifact Management & Serialization
+
+### Storage Location
+Model weights and metadata are stored in a dedicated `models/` directory:
+
+```text
+models/
+├── demand_forecast_model.txt      <-- Native, portable LightGBM tree text format
+├── demand_forecast_pipeline.joblib<-- Serialized pipeline with preprocessing transforms
+└── metadata.json                  <-- Manifest tracking training timestamp, metrics & features
+```
+
+### Artifact Manifest (`models/metadata.json`)
+```json
+{
+  "model_version": "1.0.0",
+  "algorithm": "LightGBM Quantile Regressor Ensemble",
+  "trained_at": "2026-08-15T22:00:00Z",
+  "data_cutoff_date": "2026-08-15",
+  "training_rows": 15304,
+  "features_used": [
+    "lag_1_volume", "lag_2_volume", "lag_3_volume", 
+    "rolling_mean_3m", "Realized_Unit_Price", "Discount_Pct", 
+    "Product_Category", "Customer_Segment", "Sales_Region"
+  ],
+  "validation_metrics": {
+    "WAPE_pct": 6.84,
+    "MAE_units": 138.2,
+    "R2_score": 0.921
+  }
+}
+```
+
+### In-Memory Production Caching
+In the live Streamlit dashboard, the model is cached via `@st.cache_resource`. This guarantees that model loading occurs exactly once on application startup, enabling $< 5\text{ ms}$ response times during user interaction.
+
+---
+
+## 7. Adaptation to Future Incoming Data (Continuous Learning)
+
+The model adapts dynamically to newly ingested transactions through a **2-tier lifecycle**:
+
+```mermaid
+flowchart TD
+    subgraph Tier 1 [Tier 1: Dynamic Rolling Inference - Zero Retraining Needed]
+        A[New Monthly Data Added to Fact_Sales] --> B[Pipeline Computes New Lags & Rolling Means]
+        B --> C[Model Projects Next 3-6 Months Forward from Latest Date Cutoff]
+    end
+
+    subgraph Tier 2 [Tier 2: Automated Retraining Pipeline - Continuous Learning]
+        A --> D[Ingestion Hook in src/load.py]
+        D --> E[Re-fits Trees on Full Updated Dataset in < 1 Second]
+        E --> F[Updates models/demand_forecast_model.txt & metadata.json]
+    end
+```
+
+1. **Tier 1: Dynamic Rolling Inference (Immediate):**  
+   When a new month of sales transactions is ingested into DuckDB, the feature extraction logic recalculates the newest lag values (`lag_1`, `lag_2`, `lag_3`) and rolling means. The model immediately projects the subsequent 3 to 6 months from the new date cutoff without needing retraining.
+2. **Tier 2: Automated Retraining Pipeline (Scheduled / Triggered):**  
+   * **Ingestion Hook:** Running `src/load.py` automatically triggers a post-load retraining hook. Because LightGBM fits 15k–50k rows in $< 0.8\text{ seconds}$, retraining is instant and cost-free.
+   * **Cold-Start Auto-Healing:** If `app.py` starts up and finds no saved model artifact, or detects that `finance.duckdb` contains transactions newer than the model's `metadata.json` timestamp, it automatically trains a fresh model on startup.
+
+---
+
+## 8. DuckDB Database Architecture & Table Footprint
+
+### No New Mandatory Physical Tables
+The predictive pipeline requires **zero new physical tables** in DuckDB:
+* **Training Data:** Extracted directly from existing analytical views (`vw_line_margin`).
+* **Scenario Simulations:** "What-If" slider adjustments compute predictions dynamically in Python memory. This prevents temporary simulation runs from bloating the database.
+
+### Optional: Official Forecast Snapshot Table (`Fact_Demand_Forecast`)
+If corporate management wishes to persist the official 6-month baseline forecast alongside annual budgets, the pipeline can optionally write a standardized forecast snapshot table:
+
+| Column | Type | Description |
+| :--- | :--- | :--- |
+| `Forecast_Period` | `VARCHAR` | Future Period (e.g. `2026-09`, `2026-10`) |
+| `Product_ID` | `VARCHAR` | SKU Identifier |
+| `Predicted_Units` | `DOUBLE` | Median forecast demand ($\alpha = 0.50$) |
+| `Lower_Bound_Units` | `DOUBLE` | 90% confidence lower bound ($\alpha = 0.05$) |
+| `Upper_Bound_Units` | `DOUBLE` | 90% confidence upper bound ($\alpha = 0.95$) |
+| `Predicted_Net_Sales` | `DOUBLE` | Expected revenue based on list price |
+
+---
+
+## 9. Dashboard Integration Plan (`src/components/predictive.py`)
 
 A dedicated tab will be added to the Streamlit app with four interactive analytical sections:
 
@@ -144,7 +229,7 @@ A dedicated tab will be added to the Streamlit app with four interactive analyti
 
 ---
 
-## 7. Model Evaluation & Validation Protocol
+## 10. Model Evaluation & Validation Protocol
 
 To ensure realistic validation without future data leakage:
 * **Time-Based Split (Out-of-Time Validation):**  
