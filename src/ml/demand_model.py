@@ -197,13 +197,13 @@ class DemandForecastPipeline:
         return self.metadata
 
     def predict(self, df_features: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """Returns (median_predictions, lower_bound_90, upper_bound_90)."""
+        """Returns (median_predictions, lower_bound_90, upper_bound_90) with non-crossing guarantee."""
         X_cat = self.encoder.transform(df_features[self.cat_cols])
         X_num = df_features[self.num_cols].values
         X = np.hstack([X_cat, X_num])
 
         med = np.maximum(0, self.model_median.predict(X))
-        low = np.maximum(0, self.model_lower.predict(X))
+        low = np.minimum(med, np.maximum(0, self.model_lower.predict(X)))
         high = np.maximum(med, self.model_upper.predict(X))
         return med, low, high
 
