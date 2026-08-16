@@ -41,6 +41,16 @@ flowchart TD
 4. **🏢 OpEx & Budget Targets (`src/components/budget_opex.py`):**
    * Operating expenses grouped by function (SG&A, Operations, Sales, Marketing) and cost centers.
    * Target budget vs. management forecast benchmarks across profit centers.
+5. **🔮 Demand Prediction (ML) (`src/components/demand_prediction.py`):**
+   * **Dual AI Engines:** Instant toggle between **LightGBM Quantile Decision Trees** and **Deep Neural Networks (MLP 128-64-32)**.
+   * **Layman Visuals:** Forward volume and revenue timelines with 90% confidence ranges and plain-English demand driver rankings.
+   * **Simulation Sliders:** Interactive catalog price changes, promotional discount shifts, and market growth shocks.
+6. **📈 Profitability Prediction (Linear) (`src/components/profitability_prediction.py`):**
+   * **Forward Profit Trajectory Line:** Historical to future net profit timeline with linear OLS trendline slopes (e.g. $+14.2\text{k}/\text{month}$ growth).
+   * **Cost-Volume-Profit (CVP) Break-Even Model:** Intuitive linear Revenue ($R=P \cdot Q$), Total Cost ($TC=v \cdot Q + F$), and Net Profit ($\Pi=(P-v)Q - F$) lines with Break-Even Volume $Q^*$ and Margin of Safety buffer.
+   * **Cost Inflation Levers:** Raw material commodity price shifts, labor wage adjustments, and overhead allocation switchers.
+7. **📖 System Documentation (`src/components/documentation.py`):**
+   * Single-source-of-truth in-app documentation detailing system architecture, data models, DuckDB semantic views, machine learning pipelines, and linear CVP calculations.
 
 ---
 
@@ -91,6 +101,8 @@ The database loader (`src/load.py`) automatically runs 10 strict assertions prio
 ---
 
 ## 📚 Documentation
+* [Architecture & Methodology Reference Guide](docs/ARCHITECTURE_AND_METHODOLOGY_GUIDE.md)
+* [Neural Networks vs. GBDTs & Linear Profitability Modeling](docs/NEURAL_NET_AND_LINEAR_PROFITABILITY.md)
 * [Data Dictionary](docs/DATA_DICTIONARY.md)
 * [Data Model Descriptive Report](docs/DATA_MODEL_DESCRIPTIVE_REPORT.md)
 * [Predictive Demand Modeling & ML Specification](docs/PREDICTIVE_MODELING_SPECIFICATION.md)

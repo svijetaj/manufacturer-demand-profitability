@@ -1,11 +1,12 @@
 """
 2-Stage Cascaded Demand & Profitability Prediction Engine.
-Stage 1: Machine Learning (GBDT) Demand Model predicting forward volume with 90% confidence bounds.
-Stage 2: Deterministic Financial Cost & Profitability Engine calculating audit-grade margin waterfalls.
+Stage 1: Machine Learning Demand Models (LightGBM GBDT or Multi-Layer Perceptron Neural Network) predicting forward volume with 90% confidence bounds.
+Stage 2: Deterministic Financial Cost & Profitability Engine calculating audit-grade margin waterfalls, forward trajectories, and CVP break-even dynamics.
 """
 
 import os
 import json
+import time
 import datetime
 import joblib
 import numpy as np
@@ -20,18 +21,25 @@ except (ImportError, OSError, Exception):
     HAS_LIGHTGBM = False
 
 from sklearn.ensemble import HistGradientBoostingRegressor
-from sklearn.preprocessing import OrdinalEncoder
+from sklearn.neural_network import MLPRegressor
+from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder, StandardScaler
+from sklearn.compose import TransformedTargetRegressor
 from src.db import query_df
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MODELS_DIR = os.path.join(PROJECT_ROOT, "models")
-MODEL_PIPELINE_PATH = os.path.join(MODELS_DIR, "demand_forecast_pipeline.joblib")
 METADATA_PATH = os.path.join(MODELS_DIR, "metadata.json")
 
 
 def ensure_models_dir():
     """Ensures the models directory exists."""
     os.makedirs(MODELS_DIR, exist_ok=True)
+
+
+def get_model_path(model_type: str = "lightgbm") -> str:
+    """Returns the artifact filepath for a given model architecture."""
+    sanitized = "neural_network" if "neural" in model_type.lower() else "lightgbm"
+    return os.path.join(MODELS_DIR, f"demand_forecast_pipeline_{sanitized}.joblib")
 
 
 def extract_monthly_demand_dataset() -> pd.DataFrame:
@@ -115,11 +123,11 @@ def extract_monthly_demand_dataset() -> pd.DataFrame:
 
 class DemandForecastPipeline:
     """
-    Encapsulates feature preprocessing, quantile LightGBM/GBDT models
-    (Lower Bound 5%, Median 50%, Upper Bound 95%), and permutation importance.
+    Encapsulates feature preprocessing, dual model architectures (LightGBM Tree Ensembles
+    vs. Multi-Layer Perceptron Neural Network), confidence interval estimation, and permutation importance.
     """
-    def __init__(self):
-        self.encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
+    def __init__(self, model_type: str = "lightgbm"):
+        self.model_type = "neural_network" if "neural" in model_type.lower() else "lightgbm"
         self.cat_cols = ['Product_Category', 'Customer_Segment', 'Sales_Region', 'Product_ID']
         self.num_cols = [
             'Year', 'Month', 'Quarter', 
@@ -129,17 +137,45 @@ class DemandForecastPipeline:
             'rolling_mean_3m', 'rolling_std_3m'
         ]
         self.feature_names = self.cat_cols + self.num_cols
+        
+        # Preprocessing components
+        if self.model_type == "neural_network":
+            self.encoder = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
+            self.scaler = StandardScaler()
+        else:
+            self.encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
+            self.scaler = None
+
         self.model_median = None
         self.model_lower = None
         self.model_upper = None
+        self.residual_p05 = 0.0
+        self.residual_p95 = 0.0
         self.feature_importances_ = None
         self.metadata = {}
 
+    def _transform_features(self, df: pd.DataFrame, fit: bool = False) -> np.ndarray:
+        """Encodes categorical columns and standardizes numerical columns."""
+        if self.model_type == "neural_network":
+            if fit:
+                X_cat = self.encoder.fit_transform(df[self.cat_cols])
+                X_num = self.scaler.fit_transform(df[self.num_cols].values)
+            else:
+                X_cat = self.encoder.transform(df[self.cat_cols])
+                X_num = self.scaler.transform(df[self.num_cols].values)
+            return np.hstack([X_cat, X_num])
+        else:
+            if fit:
+                X_cat = self.encoder.fit_transform(df[self.cat_cols])
+            else:
+                X_cat = self.encoder.transform(df[self.cat_cols])
+            X_num = df[self.num_cols].values
+            return np.hstack([X_cat, X_num])
+
     def fit(self, df: pd.DataFrame) -> Dict[str, Any]:
-        """Trains median, lower-bound (5%), and upper-bound (95%) quantile regressors."""
-        X_cat = self.encoder.fit_transform(df[self.cat_cols])
-        X_num = df[self.num_cols].values
-        X = np.hstack([X_cat, X_num])
+        """Trains either LightGBM GBDT or Multi-Layer Perceptron Neural Network."""
+        t0 = time.time()
+        X = self._transform_features(df, fit=True)
         y = df['Quantity_Sold'].values
 
         # Time-based Train/Validation split (last 3 periods for out-of-time evaluation)
@@ -155,65 +191,116 @@ class DemandForecastPipeline:
         X_train, y_train = X[train_mask], y[train_mask]
         X_val, y_val = X[val_mask], y[val_mask]
 
-        if HAS_LIGHTGBM:
-            self.model_median = lgb.LGBMRegressor(
-                objective='regression',
-                n_estimators=120,
-                learning_rate=0.08,
-                num_leaves=31,
-                random_state=42,
-                verbosity=-1
+        if self.model_type == "neural_network":
+            # Deep Multi-Layer Perceptron Architecture with Transformed Target Regressor
+            mlp = MLPRegressor(
+                hidden_layer_sizes=(128, 64, 32),
+                activation='relu',
+                solver='adam',
+                alpha=0.001,
+                batch_size=64,
+                learning_rate='adaptive',
+                learning_rate_init=0.003,
+                max_iter=300,
+                early_stopping=True,
+                validation_fraction=0.15,
+                n_iter_no_change=15,
+                random_state=42
             )
-            self.model_lower = lgb.LGBMRegressor(
-                objective='quantile',
-                alpha=0.05,
-                n_estimators=100,
-                learning_rate=0.08,
-                num_leaves=31,
-                random_state=42,
-                verbosity=-1
+            self.model_median = TransformedTargetRegressor(
+                regressor=mlp,
+                transformer=StandardScaler()
             )
-            self.model_upper = lgb.LGBMRegressor(
-                objective='quantile',
-                alpha=0.95,
-                n_estimators=100,
-                learning_rate=0.08,
-                num_leaves=31,
-                random_state=42,
-                verbosity=-1
-            )
+            self.model_median.fit(X_train, y_train)
+
+            # Compute empirical out-of-time residual percentiles for 90% confidence bounds
+            val_preds_raw = self.model_median.predict(X_val)
+            residuals = y_val - val_preds_raw
+            self.residual_p05 = float(np.percentile(residuals, 5))
+            self.residual_p95 = float(np.percentile(residuals, 95))
+            algo_name = "Deep Neural Network (MLP 128-64-32)"
         else:
-            self.model_median = HistGradientBoostingRegressor(loss='squared_error', max_iter=100, random_state=42)
-            self.model_lower = HistGradientBoostingRegressor(loss='quantile', quantile=0.05, max_iter=80, random_state=42)
-            self.model_upper = HistGradientBoostingRegressor(loss='quantile', quantile=0.95, max_iter=80, random_state=42)
+            if HAS_LIGHTGBM:
+                self.model_median = lgb.LGBMRegressor(
+                    objective='regression',
+                    n_estimators=120,
+                    learning_rate=0.08,
+                    num_leaves=31,
+                    random_state=42,
+                    verbosity=-1
+                )
+                self.model_lower = lgb.LGBMRegressor(
+                    objective='quantile',
+                    alpha=0.05,
+                    n_estimators=100,
+                    learning_rate=0.08,
+                    num_leaves=31,
+                    random_state=42,
+                    verbosity=-1
+                )
+                self.model_upper = lgb.LGBMRegressor(
+                    objective='quantile',
+                    alpha=0.95,
+                    n_estimators=100,
+                    learning_rate=0.08,
+                    num_leaves=31,
+                    random_state=42,
+                    verbosity=-1
+                )
+                algo_name = "LightGBM Quantile Tree Regressors"
+            else:
+                self.model_median = HistGradientBoostingRegressor(loss='squared_error', max_iter=100, random_state=42)
+                self.model_lower = HistGradientBoostingRegressor(loss='quantile', quantile=0.05, max_iter=80, random_state=42)
+                self.model_upper = HistGradientBoostingRegressor(loss='quantile', quantile=0.95, max_iter=80, random_state=42)
+                algo_name = "HistGradientBoosting Quantile Regressors"
 
-        self.model_median.fit(X_train, y_train)
-        self.model_lower.fit(X_train, y_train)
-        self.model_upper.fit(X_train, y_train)
+            self.model_median.fit(X_train, y_train)
+            self.model_lower.fit(X_train, y_train)
+            self.model_upper.fit(X_train, y_train)
 
-        # Compute accurate Feature Importances via Permutation Importance
+        train_duration = time.time() - t0
+
+        # Compute accurate Feature Importances via Permutation Importance on base feature space
         try:
             from sklearn.inspection import permutation_importance
-            sample_size = min(len(X_val), 1500)
+            sample_size = min(len(X_val), 1000)
             perm_indices = np.random.choice(len(X_val), sample_size, replace=False)
             perm = permutation_importance(
                 self.model_median, 
                 X_val[perm_indices], 
                 y_val[perm_indices], 
-                n_repeats=5, 
+                n_repeats=3, 
                 random_state=42, 
                 n_jobs=-1
             )
             raw_imp = np.maximum(0, perm.importances_mean)
-            total_imp = np.sum(raw_imp) + 1e-8
-            self.feature_importances_ = raw_imp / total_imp
+            
+            # Map back to original feature names
+            if self.model_type == "neural_network":
+                ohe_features = self.encoder.get_feature_names_out(self.cat_cols)
+                all_transformed_names = list(ohe_features) + self.num_cols
+                # Aggregate one-hot categorical importances back to original column names
+                cat_dict = {col: 0.0 for col in self.feature_names}
+                for imp_val, feat_str in zip(raw_imp, all_transformed_names):
+                    matched = False
+                    for orig_cat in self.cat_cols:
+                        if feat_str.startswith(orig_cat):
+                            cat_dict[orig_cat] += float(imp_val)
+                            matched = True
+                            break
+                    if not matched and feat_str in cat_dict:
+                        cat_dict[feat_str] += float(imp_val)
+                agg_imp = np.array([cat_dict[f] for f in self.feature_names])
+            else:
+                agg_imp = raw_imp[:len(self.feature_names)]
+
+            total_imp = np.sum(agg_imp) + 1e-8
+            self.feature_importances_ = agg_imp / total_imp
         except Exception:
             self.feature_importances_ = np.ones(len(self.feature_names)) / len(self.feature_names)
 
         # Validation Metrics Evaluation
-        preds_val = self.model_median.predict(X_val)
-        preds_val = np.maximum(0, preds_val)
-
+        preds_val = np.maximum(0, self.model_median.predict(X_val))
         mae = float(np.mean(np.abs(y_val - preds_val)))
         wape = float(np.sum(np.abs(y_val - preds_val)) / np.sum(y_val) * 100)
         ss_res = np.sum((y_val - preds_val) ** 2)
@@ -221,9 +308,11 @@ class DemandForecastPipeline:
         r2 = float(1 - (ss_res / (ss_tot + 1e-8)))
 
         self.metadata = {
-            "model_version": "1.0.0",
-            "algorithm": "LightGBM Quantile Regressors" if HAS_LIGHTGBM else "HistGradientBoosting Quantile Regressors",
+            "model_version": "2.0.0",
+            "model_type": self.model_type,
+            "algorithm": algo_name,
             "trained_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "train_duration_seconds": round(train_duration, 3),
             "data_cutoff_period": str(unique_periods[-1]),
             "training_rows": int(len(df)),
             "features_used": self.feature_names,
@@ -237,21 +326,22 @@ class DemandForecastPipeline:
 
     def predict(self, df_features: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Returns (median_predictions, lower_bound_90, upper_bound_90) with non-crossing guarantee."""
-        X_cat = self.encoder.transform(df_features[self.cat_cols])
-        X_num = df_features[self.num_cols].values
-        X = np.hstack([X_cat, X_num])
-
+        X = self._transform_features(df_features, fit=False)
         med = np.maximum(0, self.model_median.predict(X))
-        low = np.minimum(med, np.maximum(0, self.model_lower.predict(X)))
-        high = np.maximum(med, self.model_upper.predict(X))
+
+        if self.model_type == "neural_network":
+            low = np.maximum(0, med + self.residual_p05)
+            high = np.maximum(med, med + self.residual_p95)
+        else:
+            low = np.minimum(med, np.maximum(0, self.model_lower.predict(X)))
+            high = np.maximum(med, self.model_upper.predict(X))
+
         return med, low, high
 
     def get_feature_importances(self) -> pd.DataFrame:
-        """Extracts normalized feature importance weights from the median model."""
+        """Extracts normalized feature importance weights."""
         if hasattr(self, 'feature_importances_') and self.feature_importances_ is not None:
             importances = self.feature_importances_
-        elif hasattr(self.model_median, 'feature_importances_'):
-            importances = self.model_median.feature_importances_
         else:
             importances = np.ones(len(self.feature_names)) / len(self.feature_names)
         
@@ -263,27 +353,43 @@ class DemandForecastPipeline:
         return df_imp
 
 
-def train_and_save_model() -> Tuple[DemandForecastPipeline, Dict[str, Any]]:
-    """Trains a new demand forecasting pipeline and persists artifacts to models/."""
+def train_and_save_model(model_type: str = "lightgbm") -> Tuple[DemandForecastPipeline, Dict[str, Any]]:
+    """Trains a demand forecasting pipeline and persists artifacts to models/."""
     ensure_models_dir()
     df = extract_monthly_demand_dataset()
-    pipeline = DemandForecastPipeline()
+    pipeline = DemandForecastPipeline(model_type=model_type)
     metadata = pipeline.fit(df)
 
-    joblib.dump(pipeline, MODEL_PIPELINE_PATH)
+    save_path = get_model_path(model_type)
+    joblib.dump(pipeline, save_path)
+
+    # Update collective metadata registry
+    meta_registry = {}
+    if os.path.exists(METADATA_PATH):
+        try:
+            with open(METADATA_PATH, 'r') as f:
+                meta_registry = json.load(f)
+        except Exception:
+            pass
+    
+    meta_key = "neural_network" if "neural" in model_type.lower() else "lightgbm"
+    meta_registry[meta_key] = metadata
+
     with open(METADATA_PATH, 'w') as f:
-        json.dump(metadata, f, indent=2)
+        json.dump(meta_registry, f, indent=2)
+
     return pipeline, metadata
 
 
-def load_or_train_model() -> DemandForecastPipeline:
+def load_or_train_model(model_type: str = "lightgbm") -> DemandForecastPipeline:
     """Loads the serialized model artifact or automatically trains a fresh one if missing."""
-    if os.path.exists(MODEL_PIPELINE_PATH):
+    save_path = get_model_path(model_type)
+    if os.path.exists(save_path):
         try:
-            return joblib.load(MODEL_PIPELINE_PATH)
+            return joblib.load(save_path)
         except Exception:
             pass
-    pipeline, _ = train_and_save_model()
+    pipeline, _ = train_and_save_model(model_type=model_type)
     return pipeline
 
 

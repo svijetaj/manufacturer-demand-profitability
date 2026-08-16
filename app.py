@@ -9,7 +9,9 @@ from src.components.overview import render_overview
 from src.components.demand import render_demand
 from src.components.profit import render_profit
 from src.components.budget_opex import render_budget_opex
-from src.components.predictive import render_predictive
+from src.components.demand_prediction import render_demand_prediction
+from src.components.profitability_prediction import render_profitability_prediction
+from src.components.documentation import render_documentation
 
 # 1. Streamlit Page Configuration
 st.set_page_config(
@@ -79,17 +81,19 @@ regions = query_df("SELECT DISTINCT Sales_Region FROM Dim_Customer ORDER BY 1;")
 selected_regions = st.sidebar.multiselect("🌍 Sales Regions:", options=regions, default=[])
 
 st.sidebar.markdown("---")
-st.sidebar.info("💡 **Semantic Layer & ML Engine Active**\nConnecting to `finance.duckdb`.\nPowered by LightGBM / GBDT Quantile Forecasting.")
+st.sidebar.info("💡 **Semantic Layer & ML Engine Active**\nConnecting to `finance.duckdb`.\nDual LightGBM & Neural Network engines with Linear Profitability modeling.")
 
 # 3. Main Navigation Header & Tabs
 st.title("💼 Enterprise Demand & Profit Intelligence Platform")
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "📊 Executive Overview",
-    "📦 Demand Analytics",
-    "💰 Profit Waterfall & Margins",
+    "📦 Historical Demand",
+    "💰 Historical Margins",
     "🏢 OpEx & Budget Targets",
-    "🔮 Predictive Demand & What-If"
+    "🔮 Demand Prediction (ML)",
+    "📈 Profitability Prediction (Linear)",
+    "📖 System Documentation"
 ])
 
 with tab1:
@@ -105,5 +109,11 @@ with tab4:
     render_budget_opex(date_range)
 
 with tab5:
-    render_predictive(date_range, selected_categories, selected_segments, selected_regions)
+    render_demand_prediction(date_range, selected_categories, selected_segments, selected_regions)
+
+with tab6:
+    render_profitability_prediction(date_range, selected_categories, selected_segments, selected_regions)
+
+with tab7:
+    render_documentation()
 
