@@ -9,6 +9,7 @@ from src.components.overview import render_overview
 from src.components.demand import render_demand
 from src.components.profit import render_profit
 from src.components.budget_opex import render_budget_opex
+from src.components.predictive import render_predictive
 
 # 1. Streamlit Page Configuration
 st.set_page_config(
@@ -78,16 +79,17 @@ regions = query_df("SELECT DISTINCT Sales_Region FROM Dim_Customer ORDER BY 1;")
 selected_regions = st.sidebar.multiselect("🌍 Sales Regions:", options=regions, default=[])
 
 st.sidebar.markdown("---")
-st.sidebar.info("💡 **Semantic Layer & DuckDB Active**\nConnecting to `finance.duckdb`.\nPowered by driver-based synthetic engine & SQL semantic views.")
+st.sidebar.info("💡 **Semantic Layer & ML Engine Active**\nConnecting to `finance.duckdb`.\nPowered by LightGBM / GBDT Quantile Forecasting.")
 
 # 3. Main Navigation Header & Tabs
 st.title("💼 Enterprise Demand & Profit Intelligence Platform")
 
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📊 Executive Overview",
     "📦 Demand Analytics",
     "💰 Profit Waterfall & Margins",
-    "🏢 OpEx & Budget Targets"
+    "🏢 OpEx & Budget Targets",
+    "🔮 Predictive Demand & What-If"
 ])
 
 with tab1:
@@ -101,3 +103,7 @@ with tab3:
 
 with tab4:
     render_budget_opex(date_range)
+
+with tab5:
+    render_predictive(date_range, selected_categories, selected_segments, selected_regions)
+

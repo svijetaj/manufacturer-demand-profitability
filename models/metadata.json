@@ -1,0 +1,30 @@
+{
+  "model_version": "1.0.0",
+  "algorithm": "HistGradientBoosting Quantile Regressors",
+  "trained_at": "2026-08-16T03:19:48.545026+00:00",
+  "data_cutoff_period": "2026-08",
+  "training_rows": 10014,
+  "features_used": [
+    "Product_Category",
+    "Customer_Segment",
+    "Sales_Region",
+    "Product_ID",
+    "Year",
+    "Month",
+    "Quarter",
+    "Unit_Weight_G",
+    "Cube_Index",
+    "Realized_Unit_Price",
+    "Discount_Pct",
+    "lag_1_volume",
+    "lag_2_volume",
+    "lag_3_volume",
+    "rolling_mean_3m",
+    "rolling_std_3m"
+  ],
+  "metrics": {
+    "WAPE_pct": 38.43,
+    "MAE_units": 13144.62,
+    "R2_score": 0.636
+  }
+}
