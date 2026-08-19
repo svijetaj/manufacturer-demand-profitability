@@ -8,8 +8,10 @@ venv/
 .ipynb_checkpoints/
 *.egg-info/
 .pytest_cache/
-# generated outputs - regenerate with `make data`
+# generated outputs - regenerate with `make data` / `python src/load.py`
 data/raw/*.csv
 !data/raw/.gitkeep
+*.db
+*.duckdb
 out/
 runs/
