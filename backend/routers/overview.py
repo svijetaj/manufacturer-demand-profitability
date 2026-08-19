@@ -22,7 +22,7 @@ def get_overview(
         start_date = start_date or str(bounds['min_d'])
         end_date = end_date or str(bounds['max_d'])
 
-    where_sql = build_where_clause((start_date, end_date), categories, segments, regions, prefix="m.")
+    where_sql, where_params = build_where_clause((start_date, end_date), categories, segments, regions, prefix="m.")
 
     # 1. KPI Summary
     kpi_query = f"""
@@ -39,7 +39,7 @@ def get_overview(
         FROM vw_line_margin m
         WHERE {where_sql};
     """
-    kpis = query_df(kpi_query).iloc[0].to_dict()
+    kpis = query_df(kpi_query, where_params).iloc[0].to_dict()
 
     # 2. Monthly Trend
     trend_query = f"""
@@ -54,7 +54,7 @@ def get_overview(
         GROUP BY 1
         ORDER BY 1;
     """
-    monthly_trend = query_df(trend_query).to_dict(orient="records")
+    monthly_trend = query_df(trend_query, where_params).to_dict(orient="records")
 
     # 3. Regional Revenue Share
     reg_query = f"""
@@ -67,7 +67,7 @@ def get_overview(
         GROUP BY 1
         ORDER BY Net_Sales DESC;
     """
-    regional_share = query_df(reg_query).to_dict(orient="records")
+    regional_share = query_df(reg_query, where_params).to_dict(orient="records")
 
     # 4. Top 5 Products
     top_prod_query = f"""
@@ -85,7 +85,7 @@ def get_overview(
         ORDER BY Net_Sales DESC
         LIMIT 5;
     """
-    top_products = query_df(top_prod_query).to_dict(orient="records")
+    top_products = query_df(top_prod_query, where_params).to_dict(orient="records")
 
     # 5. Top 5 Customers
     top_cust_query = f"""
@@ -102,7 +102,7 @@ def get_overview(
         ORDER BY Net_Sales DESC
         LIMIT 5;
     """
-    top_customers = query_df(top_cust_query).to_dict(orient="records")
+    top_customers = query_df(top_cust_query, where_params).to_dict(orient="records")
 
     return {
         "kpis": kpis,

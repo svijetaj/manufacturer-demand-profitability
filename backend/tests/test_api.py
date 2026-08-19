@@ -41,6 +41,29 @@ def test_demand():
     assert "seasonality" in data
     assert "elasticity_stats" in data
 
+
+def test_filter_values_are_not_sql_injectable():
+    """A crafted filter value must be bound as a literal, not parsed as SQL.
+
+    Regression guard: an always-true boolean injected through ?categories=
+    previously broke out of the IN(...) list and returned the whole table.
+    With parameter binding the payload matches no real category, so the
+    result set is empty rather than unfiltered.
+    """
+    unfiltered = client.get("/api/overview").json()["kpis"]["Total_Net_Sales"]
+    assert unfiltered > 0  # sanity: there is data to leak
+
+    payload = "x') OR 1=1 OR m.Product_Category IN ('"
+    injected = client.get("/api/overview", params={"categories": payload})
+    assert injected.status_code == 200
+    # Injection neutralized: bound as a literal category that does not exist.
+    assert injected.json()["kpis"]["Total_Net_Sales"] == 0
+
+    # A legitimate value still filters correctly (non-empty, less than the whole).
+    legit = client.get("/api/demand", params={"categories": "Cutlery"})
+    assert legit.status_code == 200
+    assert len(legit.json()["trend_records"]) > 0
+
 def test_margins():
     response = client.get("/api/margins")
     assert response.status_code == 200
