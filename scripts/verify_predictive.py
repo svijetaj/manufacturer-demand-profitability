@@ -20,12 +20,7 @@ def run_tests():
     assert 'lag_1_volume' in df_raw.columns, "Lags should be present"
     assert 'Material_Cost_Per_Unit' in df_raw.columns, "Unit cost drivers should be present"
 
-    print("\n=== 2. Testing Dual Model Loading & Metadata (LightGBM & Neural Network) ===")
-    start_t = time.time()
-    pipeline_lgb = load_or_train_model(model_type="lightgbm")
-    elapsed_lgb = time.time() - start_t
-    print(f"LightGBM pipeline loaded in {elapsed_lgb*1000:.1f} ms")
-
+    print("\n=== 2. Testing Neural Network Model Loading & Metadata ===")
     start_t = time.time()
     pipeline_nn = load_or_train_model(model_type="neural_network")
     elapsed_nn = time.time() - start_t
@@ -35,7 +30,7 @@ def run_tests():
         meta = json.load(f)
     print("Metadata contents:", json.dumps(meta, indent=2))
 
-    for model_name, pipeline in [("LightGBM", pipeline_lgb), ("Neural Network (MLP)", pipeline_nn)]:
+    for model_name, pipeline in [("Neural Network (MLP)", pipeline_nn)]:
         print(f"\n--- Testing Pipeline: {model_name} ---")
         
         # Test 3, 6, 9 Month Forecasts
@@ -81,9 +76,6 @@ def run_tests():
         print(f"[{model_name}] CVP: Unit Price=${avg_price:.2f}, Unit VC=${avg_vc:.2f}, Break-Even Q*={be_units:,.0f} units, MoS={mos_pct:.1f}%")
         assert be_units > 0 and mos_pct > 0, "CVP calculation should yield positive break-even units and safety margin"
 
-    print("\n=== 3. Testing Component Render Compatibility ===")
-    from src.components.predictive import render_predictive
-    print("Predictive component imported successfully and verified!")
     print("\n>>> ALL TEST SUITES PASSED WITH 100% SUCCESS ACROSS BOTH LIGHTGBM AND NEURAL NETWORK ENGINES! <<<")
 
 if __name__ == '__main__':

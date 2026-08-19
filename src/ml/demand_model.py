@@ -36,7 +36,7 @@ def ensure_models_dir():
     os.makedirs(MODELS_DIR, exist_ok=True)
 
 
-def get_model_path(model_type: str = "lightgbm") -> str:
+def get_model_path(model_type: str = "neural_network") -> str:
     """Returns the artifact filepath for a given model architecture."""
     sanitized = "neural_network" if "neural" in model_type.lower() else "lightgbm"
     return os.path.join(MODELS_DIR, f"demand_forecast_pipeline_{sanitized}.joblib")
@@ -126,7 +126,7 @@ class DemandForecastPipeline:
     Encapsulates feature preprocessing, dual model architectures (LightGBM Tree Ensembles
     vs. Multi-Layer Perceptron Neural Network), confidence interval estimation, and permutation importance.
     """
-    def __init__(self, model_type: str = "lightgbm"):
+    def __init__(self, model_type: str = "neural_network"):
         self.model_type = "neural_network" if "neural" in model_type.lower() else "lightgbm"
         self.cat_cols = ['Product_Category', 'Customer_Segment', 'Sales_Region', 'Product_ID']
         self.num_cols = [
@@ -353,7 +353,7 @@ class DemandForecastPipeline:
         return df_imp
 
 
-def train_and_save_model(model_type: str = "lightgbm") -> Tuple[DemandForecastPipeline, Dict[str, Any]]:
+def train_and_save_model(model_type: str = "neural_network") -> Tuple[DemandForecastPipeline, Dict[str, Any]]:
     """Trains a demand forecasting pipeline and persists artifacts to models/."""
     ensure_models_dir()
     df = extract_monthly_demand_dataset()
@@ -381,7 +381,7 @@ def train_and_save_model(model_type: str = "lightgbm") -> Tuple[DemandForecastPi
     return pipeline, metadata
 
 
-def load_or_train_model(model_type: str = "lightgbm") -> DemandForecastPipeline:
+def load_or_train_model(model_type: str = "neural_network") -> DemandForecastPipeline:
     """Loads the serialized model artifact or automatically trains a fresh one if missing."""
     save_path = get_model_path(model_type)
     if os.path.exists(save_path):

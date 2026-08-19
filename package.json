@@ -1,0 +1,12 @@
+{
+  "name": "meridian-corp-intelligence-platform",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev:backend": "PYTHONPATH=. ./.venv/bin/uvicorn backend.main:app --reload --port 8000",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev": "npm run dev:frontend",
+    "build:frontend": "npm --prefix frontend run build",
+    "test:backend": "PYTHONPATH=. ./.venv/bin/pytest backend/tests/test_api.py -v"
+  }
+}
