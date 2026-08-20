@@ -41,7 +41,7 @@ def get_demand(
             COALESCE(SUM(m.Quantity_Sold), 0) AS Total_Units,
             COALESCE(SUM(m.Net_Sales_Amount) / NULLIF(SUM(m.Quantity_Sold), 0), 0) AS Avg_Unit_Price,
             COALESCE(SUM(m.Net_Sales_Amount), 0) AS Net_Sales
-        FROM vw_line_margin m
+        FROM mat_line_margin m
         WHERE {where_sql}
         GROUP BY 1, 2
         ORDER BY 1, 2;
@@ -64,7 +64,7 @@ def get_demand(
             CAST(strftime(CAST(m.Transaction_Date AS DATE), '%m') AS INTEGER) AS Month_Num,
             COALESCE(SUM(m.Quantity_Sold), 0) AS Total_Units,
             COALESCE(SUM(m.Net_Sales_Amount), 0) AS Net_Sales
-        FROM vw_line_margin m
+        FROM mat_line_margin m
         WHERE {where_sql}
         GROUP BY 1, 2
         ORDER BY Month_Num;
@@ -78,7 +78,7 @@ def get_demand(
             m.Customer_Type,
             COALESCE(SUM(m.Quantity_Sold), 0) AS Total_Units,
             COALESCE(SUM(m.Net_Sales_Amount), 0) AS Net_Sales
-        FROM vw_line_margin m
+        FROM mat_line_margin m
         WHERE {where_sql}
         GROUP BY 1, 2
         ORDER BY Total_Units DESC;
@@ -92,7 +92,7 @@ def get_demand(
             (m.Net_Sales_Amount / NULLIF(m.Quantity_Sold, 0)) AS Realized_Unit_Price,
             m.Quantity_Sold,
             m.Discount_Amount / NULLIF(m.Gross_Sales_Amount, 0) AS Discount_Rate
-        FROM vw_line_margin m
+        FROM mat_line_margin m
         WHERE {where_sql} AND m.Quantity_Sold > 0 AND m.Net_Sales_Amount > 0
         LIMIT 500;
     """

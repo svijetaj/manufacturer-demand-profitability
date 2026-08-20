@@ -36,7 +36,7 @@ def get_margins(
             COALESCE(SUM(m.Freight_Cost), 0) AS Freight_Cost,
             COALESCE(SUM(m.Rebate_Amount), 0) AS Rebates,
             COALESCE(SUM(m.Contribution_Margin), 0) AS Contribution_Margin
-        FROM vw_line_margin m
+        FROM mat_line_margin m
         WHERE {where_sql};
     """
     wf = query_df(wf_query).iloc[0].to_dict()
@@ -86,7 +86,7 @@ def get_margins(
             COALESCE(SUM(m.Net_Sales_Amount), 0) AS Net_Sales,
             COALESCE((SUM(m.Gross_Profit) / NULLIF(SUM(m.Net_Sales_Amount), 0)) * 100, 0) AS Gross_Margin_Pct,
             COALESCE((SUM(m.Contribution_Margin) / NULLIF(SUM(m.Net_Sales_Amount), 0)) * 100, 0) AS Pocket_Margin_Pct
-        FROM vw_line_margin m
+        FROM mat_line_margin m
         JOIN Dim_Customer c ON c.Customer_ID = m.Customer_ID
         WHERE {where_sql}
         GROUP BY 1, 2
@@ -108,7 +108,7 @@ def get_margins(
             COALESCE((SUM(m.Gross_Profit) / NULLIF(SUM(m.Net_Sales_Amount), 0)) * 100, 0) AS Gross_Margin_Pct,
             COALESCE(SUM(m.Contribution_Margin), 0) AS Contribution_Margin,
             COALESCE((SUM(m.Contribution_Margin) / NULLIF(SUM(m.Net_Sales_Amount), 0)) * 100, 0) AS Pocket_Margin_Pct
-        FROM vw_line_margin m
+        FROM mat_line_margin m
         JOIN Dim_Product p ON p.Product_ID = m.Product_ID
         WHERE {where_sql}
         GROUP BY 1, 2, 3

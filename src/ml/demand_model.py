@@ -73,7 +73,7 @@ def extract_monthly_demand_dataset() -> pd.DataFrame:
             (SUM(c.Machine_Hours) / NULLIF(SUM(m.Quantity_Sold), 0)) AS Machine_Hours_Per_Unit,
             (SUM(m.Freight_Cost) / NULLIF(SUM(m.Quantity_Sold), 0)) AS Freight_Cost_Per_Unit,
             (SUM(m.Rebate_Amount) / NULLIF(SUM(m.Net_Sales_Amount), 0)) AS Rebate_Rate
-        FROM vw_line_margin m
+        FROM mat_line_margin m
         JOIN Dim_Product p ON p.Product_ID = m.Product_ID
         LEFT JOIN Fact_COGS c ON c.Transaction_ID = m.Transaction_ID
         WHERE m.Quantity_Sold > 0

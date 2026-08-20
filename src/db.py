@@ -20,6 +20,16 @@ def ensure_db_exists():
 
 _READONLY_CONN = None
 
+def ensure_materialized_tables(con):
+    """Creates physical materialized table for vw_line_margin if not already materialized."""
+    try:
+        tables = con.execute("SHOW TABLES;").fetchall()
+        table_names = [t[0] for t in tables]
+        if "mat_line_margin" not in table_names:
+            con.execute("CREATE TABLE mat_line_margin AS SELECT * FROM vw_line_margin;")
+    except Exception:
+        pass
+
 def get_connection(read_only: bool = True) -> duckdb.DuckDBPyConnection:
     """Returns a DuckDB connection to the local database, using a cached connection for read-only queries."""
     global _READONLY_CONN
@@ -27,6 +37,7 @@ def get_connection(read_only: bool = True) -> duckdb.DuckDBPyConnection:
     if read_only:
         if _READONLY_CONN is None:
             _READONLY_CONN = duckdb.connect(DB_PATH, read_only=True)
+            ensure_materialized_tables(_READONLY_CONN)
         return _READONLY_CONN
     return duckdb.connect(DB_PATH, read_only=False)
 
@@ -52,13 +63,19 @@ def build_where_clause(date_range, selected_categories=None, selected_segments=N
     where_clauses = [
         f"{prefix}Transaction_Date BETWEEN '{date_range[0]}' AND '{date_range[1]}'"
     ]
-    if selected_categories:
+    if selected_categories and isinstance(selected_categories, (list, tuple, set, str)):
+        if isinstance(selected_categories, str):
+            selected_categories = [selected_categories]
         cats = "', '".join(selected_categories)
         where_clauses.append(f"{prefix}Product_Category IN ('{cats}')")
-    if selected_segments:
+    if selected_segments and isinstance(selected_segments, (list, tuple, set, str)):
+        if isinstance(selected_segments, str):
+            selected_segments = [selected_segments]
         segs = "', '".join(selected_segments)
         where_clauses.append(f"{prefix}Customer_Segment IN ('{segs}')")
-    if selected_regions:
+    if selected_regions and isinstance(selected_regions, (list, tuple, set, str)):
+        if isinstance(selected_regions, str):
+            selected_regions = [selected_regions]
         regs = "', '".join(selected_regions)
         where_clauses.append(f"{prefix}Sales_Region IN ('{regs}')")
     return " AND ".join(where_clauses)

@@ -36,7 +36,7 @@ def get_overview(
             COALESCE((SUM(m.Contribution_Margin) / NULLIF(SUM(m.Net_Sales_Amount), 0)) * 100, 0) AS Pocket_Margin_Pct,
             COUNT(DISTINCT m.Order_ID) AS Total_Orders,
             COUNT(DISTINCT m.Customer_ID) AS Active_Customers
-        FROM vw_line_margin m
+        FROM mat_line_margin m
         WHERE {where_sql};
     """
     kpis = query_df(kpi_query).iloc[0].to_dict()
@@ -49,7 +49,7 @@ def get_overview(
             COALESCE(SUM(m.Gross_Profit), 0) AS Gross_Profit,
             COALESCE(SUM(m.Contribution_Margin), 0) AS Contribution_Margin,
             COALESCE(SUM(m.Quantity_Sold), 0) AS Quantity_Sold
-        FROM vw_line_margin m
+        FROM mat_line_margin m
         WHERE {where_sql}
         GROUP BY 1
         ORDER BY 1;
@@ -62,7 +62,7 @@ def get_overview(
             m.Sales_Region,
             COALESCE(SUM(m.Net_Sales_Amount), 0) AS Net_Sales,
             COALESCE(SUM(m.Quantity_Sold), 0) AS Quantity_Sold
-        FROM vw_line_margin m
+        FROM mat_line_margin m
         WHERE {where_sql}
         GROUP BY 1
         ORDER BY Net_Sales DESC;
@@ -78,7 +78,7 @@ def get_overview(
             COALESCE(SUM(m.Net_Sales_Amount), 0) AS Net_Sales,
             COALESCE(SUM(m.Gross_Profit), 0) AS Gross_Profit,
             COALESCE((SUM(m.Gross_Profit) / NULLIF(SUM(m.Net_Sales_Amount), 0)) * 100, 0) AS Gross_Margin_Pct
-        FROM vw_line_margin m
+        FROM mat_line_margin m
         JOIN Dim_Product p ON p.Product_ID = m.Product_ID
         WHERE {where_sql}
         GROUP BY 1, 2
@@ -95,7 +95,7 @@ def get_overview(
             COALESCE(SUM(m.Net_Sales_Amount), 0) AS Net_Sales,
             COALESCE(SUM(m.Contribution_Margin), 0) AS Contribution_Margin,
             COALESCE((SUM(m.Contribution_Margin) / NULLIF(SUM(m.Net_Sales_Amount), 0)) * 100, 0) AS Pocket_Margin_Pct
-        FROM vw_line_margin m
+        FROM mat_line_margin m
         JOIN Dim_Customer c ON c.Customer_ID = m.Customer_ID
         WHERE {where_sql}
         GROUP BY 1, 2
