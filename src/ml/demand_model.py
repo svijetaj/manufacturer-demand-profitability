@@ -398,8 +398,9 @@ def load_or_train_model(model_type: str = "neural_network") -> DemandForecastPip
     return pipeline
 
 
+@lru_cache(maxsize=32)
 def generate_forward_profitability_forecast(
-    pipeline: DemandForecastPipeline,
+    model_type: str = "neural_network",
     horizon_months: int = 6,
     price_delta_pct: float = 0.0,
     discount_delta_pct: float = 0.0,
@@ -412,6 +413,7 @@ def generate_forward_profitability_forecast(
     Combines Stage 1 ML demand predictions with deterministic manufacturing cost drivers,
     cost inflation shifts, and dual overhead allocation mechanisms (Units vs Machine Hours).
     """
+    pipeline = load_or_train_model(model_type=model_type)
     df_hist = extract_monthly_demand_dataset()
     latest_period = sorted(df_hist['period'].unique())[-1]
     latest_year, latest_month = int(latest_period.split('-')[0]), int(latest_period.split('-')[1])

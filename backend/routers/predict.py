@@ -64,14 +64,14 @@ def predict_demand(req: DemandPredictRequest):
 
     # 2. Run Forward Simulation
     df_baseline = generate_forward_profitability_forecast(
-        pipeline,
+        model_type=model_type_key,
         horizon_months=req.horizon_months,
         price_delta_pct=0.0,
         discount_delta_pct=0.0,
         demand_shock_pct=0.0
     )
     df_simulated = generate_forward_profitability_forecast(
-        pipeline,
+        model_type=model_type_key,
         horizon_months=req.horizon_months,
         price_delta_pct=req.price_delta_pct,
         discount_delta_pct=req.discount_delta_pct,
@@ -144,12 +144,12 @@ def predict_profitability(req: ProfitabilityPredictRequest):
 
     # Baseline & Simulated Forecasts
     df_baseline = generate_forward_profitability_forecast(
-        pipeline, horizon_months=req.horizon_months,
+        model_type="lightgbm", horizon_months=req.horizon_months,
         price_delta_pct=0.0, discount_delta_pct=0.0, demand_shock_pct=0.0,
         material_inflation_pct=0.0, labor_shift_pct=0.0
     )
     df_simulated = generate_forward_profitability_forecast(
-        pipeline, horizon_months=req.horizon_months,
+        model_type="lightgbm", horizon_months=req.horizon_months,
         price_delta_pct=req.price_delta_pct, discount_delta_pct=0.0, demand_shock_pct=req.demand_shock_pct,
         material_inflation_pct=req.material_inflation_pct, labor_shift_pct=req.labor_shift_pct
     )
