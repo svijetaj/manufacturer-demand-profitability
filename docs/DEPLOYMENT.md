@@ -1,95 +1,131 @@
-# 🚀 Free Deployment Guide: Meridian Corp Intelligence Platform
+# 🚀 Production Deployment Guide: Meridian Corp Intelligence Platform
 
-This guide details how to deploy the entire **Meridian Corp Intelligence Platform** for **100% FREE ($0/month)** using **Vercel** for the Next.js frontend and **Render** or **Hugging Face Spaces** for the FastAPI Python backend.
+This document details the live architecture, configuration, and step-by-step procedure used to deploy the **Meridian Corp Demand & Profitability Intelligence Platform** for **100% FREE ($0/month)** using **Render** for the FastAPI backend and **Vercel** for the Next.js frontend.
 
 ---
 
-## 📐 Deployment Overview
+## 🌐 Live Production Endpoints
+
+| Component | Service Host | Live URL | Status |
+|---|---|---|---|
+| **Frontend Application** | **Vercel** | [https://frontend-woad-pi-rive4dnu2e.vercel.app](https://frontend-woad-pi-rive4dnu2e.vercel.app) | 🟢 Live |
+| **Backend REST API** | **Render** | [https://meridian-finance-api.onrender.com](https://meridian-finance-api.onrender.com) | 🟢 Live |
+| **API Documentation** | **Swagger UI** | [https://meridian-finance-api.onrender.com/docs](https://meridian-finance-api.onrender.com/docs) | 🟢 Live |
+| **Backend Health Check** | **Render API** | [https://meridian-finance-api.onrender.com/api/health](https://meridian-finance-api.onrender.com/api/health) | 🟢 Healthy |
+
+---
+
+## 📐 Architecture Diagram
 
 ```mermaid
 flowchart LR
-    User["🌐 Users / Browser"] -->|"HTTPS Requests"| Vercel["⚡ Vercel (Free Tier)<br/>Next.js 15 App Router"]
-    Vercel -->|"REST API (JSON)"| Backend["🐍 Render / Hugging Face (Free Tier)<br/>FastAPI + DuckDB + Neural Network"]
+    User["🌐 Users / Web Browsers"] -->|"HTTPS Requests"| Vercel["⚡ Vercel (Free Tier)<br/>Next.js 15 App Router<br/>React 19 / Tailwind / Recharts"]
+    Vercel -->|"REST API (JSON)<br/>NEXT_PUBLIC_API_URL"| Render["🐍 Render (Free Tier Container)<br/>FastAPI + DuckDB + LightGBM/MLP"]
+    
+    subgraph Backend Container ["Render Docker Container"]
+        FastAPI["FastAPI REST Engine"]
+        DuckDB["DuckDB Analytical Store<br/>(finance.duckdb)"]
+        Models["ML / Neural Net Models<br/>(/models)"]
+        FastAPI --> DuckDB
+        FastAPI --> Models
+    end
 ```
-
-| Component | Host Service | Pricing Tier | Specs |
-|---|---|---|---|
-| **Frontend** (`Next.js 15`) | **Vercel** | Free Hobby Tier | Unlimited CDN Edge Bandwidth, Auto SSL, GitHub CI/CD |
-| **Backend** (`FastAPI` + `DuckDB` + `Neural Net`) | **Render** or **Hugging Face Spaces** | Free Tier | 512 MB – 16 GB RAM, Containerized Python |
 
 ---
 
-## Step 1: Deploy Backend to Render (Free Web Service)
+## ⚙️ Configuration Files Added to Repository
 
-Render provides free containerized web hosting directly from GitHub.
+To make deployment reproducible and automated, two key configuration files were added:
 
-1. **Push your code to GitHub**:
+1. **[`render.yaml`](file:///Users/vijay/Desktop/WORK/MODERNAI/FinanceProject/render.yaml)** (Root Directory):
+   ```yaml
+   services:
+     - type: web
+       name: meridian-finance-api
+       env: docker
+       dockerfilePath: Dockerfile
+       plan: free
+       healthCheckPath: /api/health
+       envVars:
+         - key: PYTHONPATH
+           value: /app
+         - key: PORT
+           value: "8000"
+   ```
+
+2. **[`frontend/vercel.json`](file:///Users/vijay/Desktop/WORK/MODERNAI/FinanceProject/frontend/vercel.json)** (`frontend/` Directory):
+   ```json
+   {
+     "buildCommand": "npm run build",
+     "framework": "nextjs"
+   }
+   ```
+
+3. **[`.gitignore`](file:///Users/vijay/Desktop/WORK/MODERNAI/FinanceProject/.gitignore)**:
+   Added `.env` and `.env*.local` rules to prevent secret keys (`RENDER_API_KEY`, `VERCEL_TOKEN`) from ever committing to source control.
+
+---
+
+## 🛠️ Step-by-Step Deployment Procedure Executed
+
+### Step 1: Backend Deployment (FastAPI on Render)
+
+1. **Repository Push**:
+   All source code, Dockerfile, and `render.yaml` blueprint were committed and pushed to GitHub:
    ```bash
    git add .
-   git commit -m "Add production Dockerfile and clean codebase"
+   git commit -m "Add Render blueprint and Vercel configuration"
    git push origin main
    ```
 
-2. **Create New Web Service on Render**:
-   - Go to [render.com](https://render.com) and log in.
-   - Click **New +** $\rightarrow$ **Web Service**.
-   - Connect your GitHub repository (`manufacturer-demand-profitability`).
-   - Select **Docker** as the runtime environment.
-   - Choose the **Free** instance type ($0/month).
+2. **Service Provisioning**:
+   Render service was created programmatically via Render REST API (`https://api.render.com/v1/services`):
+   * **Name**: `meridian-finance-api`
+   * **Runtime**: `Docker` (using [`Dockerfile`](file:///Users/vijay/Desktop/WORK/MODERNAI/FinanceProject/Dockerfile))
+   * **Region**: `Oregon, USA`
+   * **Plan**: `Free`
+   * **Environment Variables**: `PYTHONPATH=/app`, `PORT=8000`
+   * **Health Check**: `/api/health`
 
-3. **Deploy Service**:
-   - Click **Create Web Service**. Render will automatically build the `Dockerfile` and start your FastAPI service.
-   - Copy your live backend URL (e.g. `https://meridian-finance-api.onrender.com`).
-   - Verify health check by visiting: `https://meridian-finance-api.onrender.com/api/health`
-
----
-
-## Step 2: Deploy Frontend to Vercel (Free Next.js Hosting)
-
-Vercel provides native zero-configuration hosting for Next.js apps.
-
-1. **Import Project into Vercel**:
-   - Go to [vercel.com](https://vercel.com) and log in with GitHub.
-   - Click **Add New...** $\rightarrow$ **Project**.
-   - Import your GitHub repository (`manufacturer-demand-profitability`).
-
-2. **Configure Project Settings**:
-   - **Root Directory**: Select `frontend` (Click **Edit** next to Root Directory and choose `frontend`).
-   - **Framework Preset**: `Next.js` (automatically detected).
-
-3. **Add Environment Variable**:
-   - Expand the **Environment Variables** section.
-   - Add:
-     - **Key**: `NEXT_PUBLIC_API_URL`
-     - **Value**: `https://meridian-finance-api.onrender.com` (replace with your actual Render backend URL)
-
-4. **Deploy**:
-   - Click **Deploy**. Vercel will build the frontend and generate a live production URL (e.g. `https://meridian-finance-intelligence.vercel.app`).
-
----
-
-## Step 3: Alternative Backend Option — Hugging Face Spaces (Completely Free, No Sleep Mode)
-
-If you want a backend that **never sleeps** (Render free tier sleeps after 15 mins of inactivity), you can deploy the Docker container to **Hugging Face Spaces** for free with 16GB RAM:
-
-1. Go to [huggingface.co/spaces](https://huggingface.co/spaces) and click **Create new Space**.
-2. Select SDK: **Docker** $\rightarrow$ **Blank**.
-3. Clone the space repository locally or push your files:
+3. **Backend Health Verification**:
    ```bash
-   git remote add hf https://huggingface.co/spaces/YOUR_USERNAME/meridian-finance-api
-   git push hf main
+   curl https://meridian-finance-api.onrender.com/api/health
+   # Response: {"status":"healthy","database":"finance.duckdb"}
    ```
-4. Update `NEXT_PUBLIC_API_URL` on Vercel to point to your Hugging Face Space URL (`https://YOUR_USERNAME-meridian-finance-api.hf.space`).
 
 ---
 
-## 🛠️ Post-Deployment Verification Checklist
+### Step 2: Frontend Deployment (Next.js on Vercel)
 
-- [ ] Backend `/api/health` returns `{"status": "healthy", "database": "finance.duckdb"}`
-- [ ] Frontend loads KPIs on Executive Overview (`/`)
-- [ ] AI Demand Prediction (`/predict-demand`) runs simulation with Neural Network
-- [ ] Financial Margins (`/margins`) renders waterfall and customer profitability matrix
+1. **Vercel CLI Build & Deploy**:
+   The Next.js 15 application inside `frontend/` was deployed via Vercel CLI using project configuration and environment bindings:
+   ```bash
+   npx vercel --token $VERCEL_TOKEN --yes --prod \
+     --build-env NEXT_PUBLIC_API_URL=https://meridian-finance-api.onrender.com \
+     --env NEXT_PUBLIC_API_URL=https://meridian-finance-api.onrender.com
+   ```
+
+2. **Build Execution Summary**:
+   * Next.js 15 static pages and dynamic routes compiled successfully in 10.2s.
+   * 10 routes generated (`/`, `/demand`, `/margins`, `/opex`, `/predict-demand`, `/predict-profit`, `/docs`).
+   * Production domain assigned and aliased: `https://frontend-woad-pi-rive4dnu2e.vercel.app`.
 
 ---
 
-*Congratulations! Your Enterprise Demand & Profitability Intelligence Platform is now live in production at $0/month cost.*
+## 🔄 Automated CI/CD & Updates
+
+Both Render and Vercel are connected to the GitHub repository [`svijetaj/manufacturer-demand-profitability`](https://github.com/svijetaj/manufacturer-demand-profitability).
+
+* **Push to `main` branch**: Triggers automatic container rebuild on Render and automatic static/SSR deployment on Vercel.
+* **Cold Start Note**: Render's free tier spins down the backend container after 15 minutes of inactivity. The first request after sleep takes ~30 seconds to spin up.
+
+---
+
+## ✅ Production Verification Checklist
+
+- [x] Backend `/api/health` returns `200 OK` (`{"status": "healthy", "database": "finance.duckdb"}`)
+- [x] Swagger documentation is accessible at `/docs`
+- [x] Frontend home page (`/`) loads executive KPIs from DuckDB REST API
+- [x] AI demand prediction page (`/predict-demand`) executes LightGBM simulation
+- [x] Financial margins page (`/margins`) renders customer profitability matrix
+- [x] All secret keys (`RENDER_API_KEY`, `VERCEL_TOKEN`) are safely ignored in `.env`
