@@ -42,6 +42,10 @@ def get_model_path(model_type: str = "neural_network") -> str:
     return os.path.join(MODELS_DIR, f"demand_forecast_pipeline_{sanitized}.joblib")
 
 
+from functools import lru_cache
+
+
+@lru_cache(maxsize=1)
 def extract_monthly_demand_dataset() -> pd.DataFrame:
     """
     Extracts and aggregates monthly transaction-level data from vw_line_margin into
@@ -381,6 +385,7 @@ def train_and_save_model(model_type: str = "neural_network") -> Tuple[DemandFore
     return pipeline, metadata
 
 
+@lru_cache(maxsize=4)
 def load_or_train_model(model_type: str = "neural_network") -> DemandForecastPipeline:
     """Loads the serialized model artifact or automatically trains a fresh one if missing."""
     save_path = get_model_path(model_type)
