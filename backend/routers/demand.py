@@ -24,7 +24,7 @@ def get_demand(
         start_date = start_date or str(bounds['min_d'])
         end_date = end_date or str(bounds['max_d'])
 
-    where_sql = build_where_clause((start_date, end_date), categories, segments, regions, prefix="m.")
+    where_sql, where_params = build_where_clause((start_date, end_date), categories, segments, regions, prefix="m.")
 
     # 1. Historical Demand Trends by Granularity
     if granularity == "Weekly":
@@ -46,7 +46,7 @@ def get_demand(
         GROUP BY 1, 2
         ORDER BY 1, 2;
     """
-    df_trend = query_df(trend_query)
+    df_trend = query_df(trend_query, where_params)
     trend_records = df_trend.to_dict(orient="records")
 
     # Pivot for convenient stacked chart display in frontend
@@ -69,7 +69,7 @@ def get_demand(
         GROUP BY 1, 2
         ORDER BY Month_Num;
     """
-    seasonality = query_df(season_query).to_dict(orient="records")
+    seasonality = query_df(season_query, where_params).to_dict(orient="records")
 
     # 3. Demand by Customer Segment & Type
     segment_query = f"""
@@ -83,7 +83,7 @@ def get_demand(
         GROUP BY 1, 2
         ORDER BY Total_Units DESC;
     """
-    segment_share = query_df(segment_query).to_dict(orient="records")
+    segment_share = query_df(segment_query, where_params).to_dict(orient="records")
 
     # 4. Price Elasticity Data & Regression
     elasticity_query = f"""
@@ -96,7 +96,7 @@ def get_demand(
         WHERE {where_sql} AND m.Quantity_Sold > 0 AND m.Net_Sales_Amount > 0
         LIMIT 500;
     """
-    df_elast = query_df(elasticity_query)
+    df_elast = query_df(elasticity_query, where_params)
     elasticity_points = []
     elasticity_stats = {
         "price_elasticity_coefficient": -1.24,

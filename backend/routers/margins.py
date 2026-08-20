@@ -21,7 +21,7 @@ def get_margins(
         start_date = start_date or str(bounds['min_d'])
         end_date = end_date or str(bounds['max_d'])
 
-    where_sql = build_where_clause((start_date, end_date), categories, segments, regions, prefix="m.")
+    where_sql, where_params = build_where_clause((start_date, end_date), categories, segments, regions, prefix="m.")
 
     # 1. Margin Waterfall Aggregation
     wf_query = f"""
@@ -39,7 +39,7 @@ def get_margins(
         FROM mat_line_margin m
         WHERE {where_sql};
     """
-    wf = query_df(wf_query).iloc[0].to_dict()
+    wf = query_df(wf_query, where_params).iloc[0].to_dict()
 
     waterfall_items = [
         {"name": "Gross Sales", "amount": wf['Gross_Sales'], "type": "relative"},
@@ -93,7 +93,7 @@ def get_margins(
         HAVING Total_Units > 0
         ORDER BY Net_Sales DESC;
     """
-    customer_matrix = query_df(cust_matrix_query).to_dict(orient="records")
+    customer_matrix = query_df(cust_matrix_query, where_params).to_dict(orient="records")
 
     # 5. SKU Profitability Table
     prod_table_query = f"""
@@ -114,7 +114,7 @@ def get_margins(
         GROUP BY 1, 2, 3
         ORDER BY Net_Revenue DESC;
     """
-    sku_margins = query_df(prod_table_query).to_dict(orient="records")
+    sku_margins = query_df(prod_table_query, where_params).to_dict(orient="records")
 
     return {
         "waterfall_summary": wf,

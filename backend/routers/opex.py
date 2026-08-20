@@ -19,18 +19,18 @@ def get_opex(
         end_date = end_date or str(bounds['max_d'])
 
     # 1. Operating Expense by Function & Cost Center
-    opex_query = f"""
-        SELECT 
+    opex_query = """
+        SELECT
             Expense_Function,
             Cost_Center,
             GL_Account,
             SUM(Expense_Amount) AS Total_Expense
         FROM Fact_Operating_Expense
-        WHERE Expense_Date BETWEEN '{start_date}' AND '{end_date}'
+        WHERE Expense_Date BETWEEN ? AND ?
         GROUP BY 1, 2, 3
         ORDER BY Total_Expense DESC;
     """
-    df_opex = query_df(opex_query)
+    df_opex = query_df(opex_query, [start_date, end_date])
     opex_records = df_opex.to_dict(orient="records")
 
     # Aggregate by Expense Function

@@ -3,6 +3,8 @@ Main FastAPI Application for Meridian Corp Demand & Profitability Intelligence P
 Exposes REST endpoints for Next.js frontend, analytics, ML simulation, and RAG knowledge extraction.
 """
 
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.routers import filters, overview, demand, margins, opex, predict, rag
@@ -13,10 +15,21 @@ app = FastAPI(
     version="2.0.0"
 )
 
-# Enable CORS for Next.js development and production
+# Enable CORS for the Next.js frontend.
+# A wildcard origin combined with allow_credentials=True is rejected by browsers
+# and, if it were honored, would let any site issue credentialed requests. Pin to
+# explicit origins instead, configurable via CORS_ALLOW_ORIGINS (comma-separated)
+# for production deployments.
+_DEFAULT_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000"
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("CORS_ALLOW_ORIGINS", _DEFAULT_ORIGINS).split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -44,7 +44,7 @@ def get_connection(read_only: bool = True) -> duckdb.DuckDBPyConnection:
 def query_df(sql: str, params=None) -> pd.DataFrame:
     """Executes a SQL query and returns results as a pandas DataFrame."""
     con = get_connection(read_only=True)
-    if params:
+    if params is not None:
         return con.execute(sql, params).fetchdf()
     return con.execute(sql).fetchdf()
 
@@ -58,27 +58,29 @@ def list_tables_and_views() -> pd.DataFrame:
     """
     return query_df(sql)
 
-def build_where_clause(date_range, selected_categories=None, selected_segments=None, selected_regions=None, prefix="m.") -> str:
-    """Builds a SQL WHERE clause with explicit table alias prefixes to avoid ambiguity."""
-    where_clauses = [
-        f"{prefix}Transaction_Date BETWEEN '{date_range[0]}' AND '{date_range[1]}'"
-    ]
-    if selected_categories and isinstance(selected_categories, (list, tuple, set, str)):
-        if isinstance(selected_categories, str):
-            selected_categories = [selected_categories]
-        cats = "', '".join(selected_categories)
-        where_clauses.append(f"{prefix}Product_Category IN ('{cats}')")
-    if selected_segments and isinstance(selected_segments, (list, tuple, set, str)):
-        if isinstance(selected_segments, str):
-            selected_segments = [selected_segments]
-        segs = "', '".join(selected_segments)
-        where_clauses.append(f"{prefix}Customer_Segment IN ('{segs}')")
-    if selected_regions and isinstance(selected_regions, (list, tuple, set, str)):
-        if isinstance(selected_regions, str):
-            selected_regions = [selected_regions]
-        regs = "', '".join(selected_regions)
-        where_clauses.append(f"{prefix}Sales_Region IN ('{regs}')")
-    return " AND ".join(where_clauses)
+def build_where_clause(date_range, selected_categories=None, selected_segments=None, selected_regions=None, prefix="m."):
+    """Builds a parameterized SQL WHERE clause.
+
+    Returns a tuple of (sql_fragment, params). All user-supplied *values* are
+    emitted as ``?`` placeholders and returned in ``params`` for the driver to
+    bind, so request input can never be parsed as SQL.
+    """
+    where_clauses = [f"{prefix}Transaction_Date BETWEEN ? AND ?"]
+    params = [date_range[0], date_range[1]]
+
+    for column, values in (
+        (f"{prefix}Product_Category", selected_categories),
+        (f"{prefix}Customer_Segment", selected_segments),
+        (f"{prefix}Sales_Region", selected_regions),
+    ):
+        if values and isinstance(values, (list, tuple, set, str)):
+            if isinstance(values, str):
+                values = [values]
+            placeholders = ", ".join("?" for _ in values)
+            where_clauses.append(f"{column} IN ({placeholders})")
+            params.extend(values)
+
+    return " AND ".join(where_clauses), params
 
 if __name__ == "__main__":
     print("Available Tables & Views in finance.duckdb:")
