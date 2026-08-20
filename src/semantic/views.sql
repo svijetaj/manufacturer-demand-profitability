@@ -99,6 +99,37 @@ SELECT s.Product_ID, s.Product_Name, s.Product_Category, s.net_revenue, s.contri
 FROM vw_sku_profitability s JOIN vw_overhead_allocated o ON o.Product_ID = s.Product_ID
 GROUP BY s.Product_ID, s.Product_Name, s.Product_Category, s.net_revenue, s.contribution;
 
+-- Budget vs actuals by profit centre. Actuals reach a profit centre through the
+-- business unit on the sales line, so the join lives here once rather than in
+-- every chart that needs it.
+CREATE VIEW vw_budget_vs_actual AS
+WITH actual AS (
+  SELECT pc.Profit_Center_ID AS profit_center,
+         SUBSTR(CAST(m.Transaction_Date AS VARCHAR),1,7) AS period,
+         SUM(m.Net_Sales_Amount) AS actual_revenue,
+         SUM(m.Gross_Profit)     AS actual_gross_profit
+  FROM vw_line_margin m
+  JOIN Fact_Sales s         ON s.Transaction_ID = m.Transaction_ID
+  JOIN Dim_Profit_Center pc ON pc.Business_Unit = s.Business_Unit
+  GROUP BY 1,2),
+budget AS (
+  SELECT Profit_Center AS profit_center,
+         CAST(Fiscal_Year AS VARCHAR) || '-' ||
+           CASE WHEN Fiscal_Period < 10 THEN '0' ELSE '' END ||
+           CAST(Fiscal_Period AS VARCHAR) AS period,
+         SUM(Budget_Revenue)   AS budget_revenue,
+         SUM(Budget_Profit)    AS budget_profit,
+         SUM(Forecast_Revenue) AS forecast_revenue
+  FROM Fact_Budget GROUP BY 1,2)
+SELECT COALESCE(a.profit_center,b.profit_center) AS profit_center,
+       COALESCE(a.period,b.period)               AS period,
+       b.budget_revenue, b.forecast_revenue, a.actual_revenue,
+       a.actual_revenue - b.budget_revenue                           AS revenue_variance,
+       100.0*(a.actual_revenue - b.budget_revenue)/b.budget_revenue  AS revenue_variance_pct,
+       b.budget_profit, a.actual_gross_profit
+FROM actual a FULL OUTER JOIN budget b
+  ON a.profit_center = b.profit_center AND a.period = b.period;
+
 -- Monthly waterfall. ONE definition of Net Sales, used everywhere.
 CREATE VIEW vw_margin_waterfall AS
 SELECT period,

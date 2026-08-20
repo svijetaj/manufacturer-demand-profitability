@@ -4,7 +4,6 @@ __pycache__/
 *$py.class
 *.pytest_cache/
 .pytest_cache/
-
 # Virtual Environment
 .venv/
 env/
@@ -15,7 +14,6 @@ ENV/
 .env
 .env*.local
 *.env
-
 
 # Node & Next.js build artifacts
 frontend/node_modules/
@@ -50,3 +48,10 @@ build/
 .idea/
 *.swp
 *.swo
+
+# Generated outputs
+data/raw/*.csv
+!data/raw/.gitkeep
+out/
+runs/
+
