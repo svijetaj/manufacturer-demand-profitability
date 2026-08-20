@@ -15,22 +15,24 @@ app = FastAPI(
     version="2.0.0"
 )
 
-# Enable CORS for the Next.js frontend.
-# A wildcard origin combined with allow_credentials=True is rejected by browsers
-# and, if it were honored, would let any site issue credentialed requests. Pin to
-# explicit origins instead, configurable via CORS_ALLOW_ORIGINS (comma-separated)
-# for production deployments.
-_DEFAULT_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000"
-ALLOWED_ORIGINS = [
-    origin.strip()
-    for origin in os.getenv("CORS_ALLOW_ORIGINS", _DEFAULT_ORIGINS).split(",")
-    if origin.strip()
+# Enable CORS for Next.js frontend (local development + production Vercel domains)
+_DEFAULT_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://frontend-woad-pi-rive4dnu2e.vercel.app",
 ]
+
+env_origins = os.getenv("CORS_ALLOW_ORIGINS", "")
+if env_origins:
+    ALLOWED_ORIGINS = [o.strip() for o in env_origins.split(",") if o.strip()]
+else:
+    ALLOWED_ORIGINS = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=True,
+    allow_origins=ALLOWED_ORIGINS if ALLOWED_ORIGINS != ["*"] else ["*"],
+    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
