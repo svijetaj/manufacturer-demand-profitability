@@ -11,6 +11,12 @@ env/
 venv/
 ENV/
 
+# Environment secrets
+.env
+.env*.local
+*.env
+
+
 # Node & Next.js build artifacts
 frontend/node_modules/
 frontend/.next/

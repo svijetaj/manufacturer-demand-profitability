@@ -41,7 +41,6 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
       'Content-Type': 'application/json',
       ...options?.headers,
     },
-    cache: 'no-store'
   });
 
   if (!res.ok) {

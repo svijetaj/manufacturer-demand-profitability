@@ -18,17 +18,24 @@ def ensure_db_exists():
         subprocess.run([sys.executable, os.path.join(project_root, "data", "generate_data.py"), "--out", os.path.join(project_root, "data", "raw")], check=True)
         subprocess.run([sys.executable, os.path.join(project_root, "src", "load.py"), "--raw", os.path.join(project_root, "data", "raw"), "--db", DB_PATH, "--views", os.path.join(project_root, "src", "semantic", "views.sql")], check=True)
 
+_READONLY_CONN = None
+
 def get_connection(read_only: bool = True) -> duckdb.DuckDBPyConnection:
-    """Returns a DuckDB connection to the local database."""
+    """Returns a DuckDB connection to the local database, using a cached connection for read-only queries."""
+    global _READONLY_CONN
     ensure_db_exists()
-    return duckdb.connect(DB_PATH, read_only=read_only)
+    if read_only:
+        if _READONLY_CONN is None:
+            _READONLY_CONN = duckdb.connect(DB_PATH, read_only=True)
+        return _READONLY_CONN
+    return duckdb.connect(DB_PATH, read_only=False)
 
 def query_df(sql: str, params=None) -> pd.DataFrame:
     """Executes a SQL query and returns results as a pandas DataFrame."""
-    with get_connection(read_only=True) as con:
-        if params:
-            return con.execute(sql, params).fetchdf()
-        return con.execute(sql).fetchdf()
+    con = get_connection(read_only=True)
+    if params:
+        return con.execute(sql, params).fetchdf()
+    return con.execute(sql).fetchdf()
 
 def list_tables_and_views() -> pd.DataFrame:
     """Returns all available tables and views in the database."""
