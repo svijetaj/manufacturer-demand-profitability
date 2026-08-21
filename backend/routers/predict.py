@@ -137,19 +137,19 @@ def predict_demand(req: DemandPredictRequest):
 
 @router.post("/profitability")
 def predict_profitability(req: ProfitabilityPredictRequest):
-    pipeline = load_or_train_model(model_type="lightgbm")
+    pipeline = load_or_train_model(model_type="neural_network")
     
     target_nm_col = 'Net_Margin_Units_Basis' if "unit" in req.overhead_basis.lower() else 'Net_Margin_Hours_Basis'
     target_oh_col = 'Allocated_Overhead_Units' if "unit" in req.overhead_basis.lower() else 'Allocated_Overhead_Hours'
 
     # Baseline & Simulated Forecasts
     df_baseline = generate_forward_profitability_forecast(
-        model_type="lightgbm", horizon_months=req.horizon_months,
+        model_type="neural_network", horizon_months=req.horizon_months,
         price_delta_pct=0.0, discount_delta_pct=0.0, demand_shock_pct=0.0,
         material_inflation_pct=0.0, labor_shift_pct=0.0
     )
     df_simulated = generate_forward_profitability_forecast(
-        model_type="lightgbm", horizon_months=req.horizon_months,
+        model_type="neural_network", horizon_months=req.horizon_months,
         price_delta_pct=req.price_delta_pct, discount_delta_pct=0.0, demand_shock_pct=req.demand_shock_pct,
         material_inflation_pct=req.material_inflation_pct, labor_shift_pct=req.labor_shift_pct
     )
