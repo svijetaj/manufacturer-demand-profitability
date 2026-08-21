@@ -28,21 +28,21 @@ export default function FilterHeader() {
     <header className="bg-[#0b101d]/90 backdrop-blur-md border-b border-[#1e293b] px-6 py-3.5 sticky top-0 z-30 flex flex-wrap items-center justify-between gap-4">
       {/* Date Range Selection */}
       <div className="flex items-center gap-2.5">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300">
-          <Calendar className="h-3.5 w-3.5 text-sky-400" />
-          <span className="text-slate-400 font-medium">Period:</span>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/90 border border-slate-700 text-xs text-slate-100">
+          <Calendar className="h-4 w-4 text-sky-400" />
+          <span className="text-slate-200 font-semibold">Period:</span>
           <input
             type="date"
             value={filters.startDate || ''}
             onChange={(e) => setDateRange(e.target.value, filters.endDate || '')}
-            className="bg-transparent border-0 text-slate-200 text-xs focus:ring-0 focus:outline-none cursor-pointer"
+            className="bg-transparent border-0 text-slate-100 font-medium text-xs focus:ring-0 focus:outline-none cursor-pointer"
           />
-          <span className="text-slate-500">to</span>
+          <span className="text-slate-400 font-semibold">to</span>
           <input
             type="date"
             value={filters.endDate || ''}
             onChange={(e) => setDateRange(filters.startDate || '', e.target.value)}
-            className="bg-transparent border-0 text-slate-200 text-xs focus:ring-0 focus:outline-none cursor-pointer"
+            className="bg-transparent border-0 text-slate-100 font-medium text-xs focus:ring-0 focus:outline-none cursor-pointer"
           />
         </div>
       </div>

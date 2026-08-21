@@ -14,10 +14,27 @@
   body {
     background-color: #080c14;
     color: #f8fafc;
+    color-scheme: dark;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
+}
+
+/* Fix native date picker visibility in dark mode */
+input[type="date"] {
+  color-scheme: dark;
+  color: #f8fafc;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
 }
 
 /* Custom scrollbars */
