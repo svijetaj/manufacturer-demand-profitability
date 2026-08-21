@@ -13,6 +13,8 @@ from src.ml.demand_model import (
     extract_monthly_demand_dataset
 )
 
+from functools import lru_cache
+
 router = APIRouter(prefix="/api/predict", tags=["Predictive Intelligence"])
 
 
@@ -39,9 +41,18 @@ class ProfitabilityPredictRequest(BaseModel):
     regions: Optional[List[str]] = None
 
 
-@router.post("/demand")
-def predict_demand(req: DemandPredictRequest):
-    model_type_key = "neural_network" if "neural" in req.model_type.lower() else "lightgbm"
+@lru_cache(maxsize=128)
+def _compute_predict_demand_cached(
+    model_type: str,
+    horizon_months: int,
+    price_delta_pct: float,
+    discount_delta_pct: float,
+    demand_shock_pct: float,
+    categories_tuple: Optional[tuple],
+    segments_tuple: Optional[tuple],
+    regions_tuple: Optional[tuple]
+):
+    model_type_key = "neural_network" if "neural" in model_type.lower() else "lightgbm"
     pipeline = load_or_train_model(model_type=model_type_key)
     
     meta = getattr(pipeline, 'metadata', {})
@@ -49,12 +60,12 @@ def predict_demand(req: DemandPredictRequest):
 
     # 1. Historical monthly data
     df_hist = extract_monthly_demand_dataset()
-    if req.categories:
-        df_hist = df_hist[df_hist['Product_Category'].isin(req.categories)]
-    if req.segments:
-        df_hist = df_hist[df_hist['Customer_Segment'].isin(req.segments)]
-    if req.regions:
-        df_hist = df_hist[df_hist['Sales_Region'].isin(req.regions)]
+    if categories_tuple:
+        df_hist = df_hist[df_hist['Product_Category'].isin(categories_tuple)]
+    if segments_tuple:
+        df_hist = df_hist[df_hist['Customer_Segment'].isin(segments_tuple)]
+    if regions_tuple:
+        df_hist = df_hist[df_hist['Sales_Region'].isin(regions_tuple)]
 
     hist_monthly = df_hist.groupby("period", as_index=False).agg({
         "Quantity_Sold": "sum",
@@ -65,28 +76,28 @@ def predict_demand(req: DemandPredictRequest):
     # 2. Run Forward Simulation
     df_baseline = generate_forward_profitability_forecast(
         model_type=model_type_key,
-        horizon_months=req.horizon_months,
+        horizon_months=horizon_months,
         price_delta_pct=0.0,
         discount_delta_pct=0.0,
         demand_shock_pct=0.0
     )
     df_simulated = generate_forward_profitability_forecast(
         model_type=model_type_key,
-        horizon_months=req.horizon_months,
-        price_delta_pct=req.price_delta_pct,
-        discount_delta_pct=req.discount_delta_pct,
-        demand_shock_pct=req.demand_shock_pct
+        horizon_months=horizon_months,
+        price_delta_pct=price_delta_pct,
+        discount_delta_pct=discount_delta_pct,
+        demand_shock_pct=demand_shock_pct
     )
 
-    if req.categories:
-        df_baseline = df_baseline[df_baseline['Product_Category'].isin(req.categories)]
-        df_simulated = df_simulated[df_simulated['Product_Category'].isin(req.categories)]
-    if req.segments:
-        df_baseline = df_baseline[df_baseline['Customer_Segment'].isin(req.segments)]
-        df_simulated = df_simulated[df_simulated['Customer_Segment'].isin(req.segments)]
-    if req.regions:
-        df_baseline = df_baseline[df_baseline['Sales_Region'].isin(req.regions)]
-        df_simulated = df_simulated[df_simulated['Sales_Region'].isin(req.regions)]
+    if categories_tuple:
+        df_baseline = df_baseline[df_baseline['Product_Category'].isin(categories_tuple)]
+        df_simulated = df_simulated[df_simulated['Product_Category'].isin(categories_tuple)]
+    if segments_tuple:
+        df_baseline = df_baseline[df_baseline['Customer_Segment'].isin(segments_tuple)]
+        df_simulated = df_simulated[df_simulated['Customer_Segment'].isin(segments_tuple)]
+    if regions_tuple:
+        df_baseline = df_baseline[df_baseline['Sales_Region'].isin(regions_tuple)]
+        df_simulated = df_simulated[df_simulated['Sales_Region'].isin(regions_tuple)]
 
     # Aggregate by period
     sim_agg = df_simulated.groupby("period", as_index=False).agg({
@@ -122,7 +133,7 @@ def predict_demand(req: DemandPredictRequest):
 
     return {
         "model_metadata": {
-            "algorithm": meta.get('algorithm', req.model_type),
+            "algorithm": meta.get('algorithm', model_type),
             "model_type": model_type_key,
             "metrics": metrics,
             "train_duration_seconds": meta.get('train_duration_seconds', 0.25)
@@ -135,34 +146,55 @@ def predict_demand(req: DemandPredictRequest):
     }
 
 
-@router.post("/profitability")
-def predict_profitability(req: ProfitabilityPredictRequest):
+@router.post("/demand")
+def predict_demand(req: DemandPredictRequest):
+    cats = tuple(req.categories) if req.categories else None
+    segs = tuple(req.segments) if req.segments else None
+    regs = tuple(req.regions) if req.regions else None
+    return _compute_predict_demand_cached(
+        req.model_type, req.horizon_months, req.price_delta_pct,
+        req.discount_delta_pct, req.demand_shock_pct, cats, segs, regs
+    )
+
+
+@lru_cache(maxsize=128)
+def _compute_predict_profitability_cached(
+    horizon_months: int,
+    material_inflation_pct: float,
+    labor_shift_pct: float,
+    overhead_basis: str,
+    price_delta_pct: float,
+    demand_shock_pct: float,
+    categories_tuple: Optional[tuple],
+    segments_tuple: Optional[tuple],
+    regions_tuple: Optional[tuple]
+):
     pipeline = load_or_train_model(model_type="neural_network")
     
-    target_nm_col = 'Net_Margin_Units_Basis' if "unit" in req.overhead_basis.lower() else 'Net_Margin_Hours_Basis'
-    target_oh_col = 'Allocated_Overhead_Units' if "unit" in req.overhead_basis.lower() else 'Allocated_Overhead_Hours'
+    target_nm_col = 'Net_Margin_Units_Basis' if "unit" in overhead_basis.lower() else 'Net_Margin_Hours_Basis'
+    target_oh_col = 'Allocated_Overhead_Units' if "unit" in overhead_basis.lower() else 'Allocated_Overhead_Hours'
 
     # Baseline & Simulated Forecasts
     df_baseline = generate_forward_profitability_forecast(
-        model_type="neural_network", horizon_months=req.horizon_months,
+        model_type="neural_network", horizon_months=horizon_months,
         price_delta_pct=0.0, discount_delta_pct=0.0, demand_shock_pct=0.0,
         material_inflation_pct=0.0, labor_shift_pct=0.0
     )
     df_simulated = generate_forward_profitability_forecast(
-        model_type="neural_network", horizon_months=req.horizon_months,
-        price_delta_pct=req.price_delta_pct, discount_delta_pct=0.0, demand_shock_pct=req.demand_shock_pct,
-        material_inflation_pct=req.material_inflation_pct, labor_shift_pct=req.labor_shift_pct
+        model_type="neural_network", horizon_months=horizon_months,
+        price_delta_pct=price_delta_pct, discount_delta_pct=0.0, demand_shock_pct=demand_shock_pct,
+        material_inflation_pct=material_inflation_pct, labor_shift_pct=labor_shift_pct
     )
 
-    if req.categories:
-        df_baseline = df_baseline[df_baseline['Product_Category'].isin(req.categories)]
-        df_simulated = df_simulated[df_simulated['Product_Category'].isin(req.categories)]
-    if req.segments:
-        df_baseline = df_baseline[df_baseline['Customer_Segment'].isin(req.segments)]
-        df_simulated = df_simulated[df_simulated['Customer_Segment'].isin(req.segments)]
-    if req.regions:
-        df_baseline = df_baseline[df_baseline['Sales_Region'].isin(req.regions)]
-        df_simulated = df_simulated[df_simulated['Sales_Region'].isin(req.regions)]
+    if categories_tuple:
+        df_baseline = df_baseline[df_baseline['Product_Category'].isin(categories_tuple)]
+        df_simulated = df_simulated[df_simulated['Product_Category'].isin(categories_tuple)]
+    if segments_tuple:
+        df_baseline = df_baseline[df_baseline['Customer_Segment'].isin(segments_tuple)]
+        df_simulated = df_simulated[df_simulated['Customer_Segment'].isin(segments_tuple)]
+    if regions_tuple:
+        df_baseline = df_baseline[df_baseline['Sales_Region'].isin(regions_tuple)]
+        df_simulated = df_simulated[df_simulated['Sales_Region'].isin(regions_tuple)]
 
     # 1. Total Economics
     tot_units = max(float(df_simulated['Predicted_Units'].sum()), 1.0)
@@ -249,3 +281,15 @@ def predict_profitability(req: ProfitabilityPredictRequest):
         "cvp_curve_points": cvp_curve_points,
         "monthly_profit_timeline": timeline_sim
     }
+
+
+@router.post("/profitability")
+def predict_profitability(req: ProfitabilityPredictRequest):
+    cats = tuple(req.categories) if req.categories else None
+    segs = tuple(req.segments) if req.segments else None
+    regs = tuple(req.regions) if req.regions else None
+    return _compute_predict_profitability_cached(
+        req.horizon_months, req.material_inflation_pct, req.labor_shift_pct,
+        req.overhead_basis, req.price_delta_pct, req.demand_shock_pct,
+        cats, segs, regs
+    )

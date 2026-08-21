@@ -9,10 +9,25 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.routers import filters, overview, demand, margins, opex, predict, rag
 
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup pre-warming for ML predictions
+    try:
+        from backend.routers.predict import _compute_predict_demand_cached, _compute_predict_profitability_cached
+        _compute_predict_demand_cached("neural_network", 6, 0.0, 0.0, 0.0, None, None, None)
+        _compute_predict_profitability_cached(6, 0.0, 0.0, "Units Produced", 0.0, 0.0, None, None, None)
+        print("ML Prediction endpoints pre-warmed successfully!")
+    except Exception as e:
+        print("Warm-up exception:", e)
+    yield
+
 app = FastAPI(
     title="Meridian Corp — Demand & Profitability Intelligence API",
     description="Enterprise REST API for DuckDB analytical semantic layers, LightGBM/MLP forecasting, and CVP profitability modeling.",
-    version="2.0.0"
+    version="2.0.0",
+    lifespan=lifespan
 )
 
 # Enable CORS for Next.js frontend (local development + production Vercel domains)
