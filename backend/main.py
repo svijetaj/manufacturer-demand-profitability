@@ -7,7 +7,7 @@ import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.routers import filters, overview, demand, margins, opex, predict, rag
+from backend.routers import filters, overview, demand, margins, opex, predict, rag, variance
 
 from contextlib import asynccontextmanager
 
@@ -60,6 +60,7 @@ app.include_router(margins.router)
 app.include_router(opex.router)
 app.include_router(predict.router)
 app.include_router(rag.router)
+app.include_router(variance.router)
 
 @app.get("/")
 def root():

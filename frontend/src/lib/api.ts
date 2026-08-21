@@ -72,4 +72,7 @@ export const api = {
   }),
   getRagMetadata: () => fetchApi<any>('/api/rag/metadata'),
   getRagSchema: () => fetchApi<any>('/api/rag/schema'),
+  getVariancePeriods: () => fetchApi<any>('/api/variance/periods'),
+  getVariance: (periodA?: string, periodB?: string, filters?: FilterParams) => 
+    fetchApi<any>(`/api/variance${buildQueryString({ ...filters, period_a: periodA, period_b: periodB })}`),
 };

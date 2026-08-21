@@ -12,7 +12,8 @@ import {
   TrendingUp, 
   BookOpen, 
   Layers,
-  Database
+  Database,
+  Calculator
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -20,6 +21,7 @@ const NAV_ITEMS = [
   { href: '/demand', label: 'Historical Demand', icon: Package },
   { href: '/margins', label: 'Financial Margins', icon: DollarSign },
   { href: '/opex', label: 'OpEx & Budget', icon: Building2 },
+  { href: '/variance', label: 'Variance Explanation', icon: Calculator, badge: '5-Way' },
   { href: '/predict-demand', label: 'AI Demand Prediction', icon: Sparkles, badge: 'ML' },
   { href: '/predict-profit', label: 'Profit & CVP Model', icon: TrendingUp, badge: 'Linear' },
   { href: '/docs', label: 'System & RAG Docs', icon: BookOpen },
