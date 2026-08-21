@@ -75,13 +75,16 @@ export default function PredictDemandPage() {
   const demandDrivers = data?.demand_drivers || [];
 
   // Combine historical recent points + forecast points for seamless timeline chart
-  const recentHist = histSeries.slice(-6).map((h: any) => ({
-    period: h.period,
-    Actual_Units: h.Quantity_Sold,
-    Predicted_Units: null,
-    Lower_Bound: null,
-    Upper_Bound: null,
-  }));
+  const recentHist = histSeries.slice(-6).map((h: any, idx: number, arr: any[]) => {
+    const isLastHist = idx === arr.length - 1;
+    return {
+      period: h.period,
+      Actual_Units: h.Quantity_Sold,
+      Predicted_Units: isLastHist ? h.Quantity_Sold : null,
+      Lower_Bound: isLastHist ? h.Quantity_Sold : null,
+      Upper_Bound: isLastHist ? h.Quantity_Sold : null,
+    };
+  });
 
   const timelineData = [
     ...recentHist,
@@ -255,10 +258,10 @@ export default function PredictDemandPage() {
                 formatter={(val: any, name: any) => [val ? formatNumber(Number(val)) : 'N/A', name]}
               />
               <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '12px' }} />
-              <Line type="monotone" dataKey="Actual_Units" name="Historical Actuals" stroke="#94a3b8" strokeWidth={2.5} dot={{ r: 4 }} />
-              <Line type="monotone" dataKey="Predicted_Units" name="AI Neural Net Forecast (P50)" stroke="#38bdf8" strokeWidth={3} dot={{ r: 4 }} />
-              <Line type="monotone" dataKey="Upper_Bound" name="P90 Upper Bound" stroke="#c084fc" strokeWidth={2} strokeDasharray="4 4" dot={{ r: 2 }} />
-              <Line type="monotone" dataKey="Lower_Bound" name="P10 Lower Bound" stroke="#818cf8" strokeWidth={2} strokeDasharray="4 4" dot={{ r: 2 }} />
+              <Line connectNulls type="monotone" dataKey="Actual_Units" name="Historical Actuals" stroke="#94a3b8" strokeWidth={2.5} dot={{ r: 4 }} />
+              <Line connectNulls type="monotone" dataKey="Predicted_Units" name="AI Neural Net Forecast (P50)" stroke="#38bdf8" strokeWidth={3} dot={{ r: 4 }} />
+              <Line connectNulls type="monotone" dataKey="Upper_Bound" name="P90 Upper Bound" stroke="#c084fc" strokeWidth={2} strokeDasharray="4 4" dot={{ r: 2 }} />
+              <Line connectNulls type="monotone" dataKey="Lower_Bound" name="P10 Lower Bound" stroke="#818cf8" strokeWidth={2} strokeDasharray="4 4" dot={{ r: 2 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
