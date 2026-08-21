@@ -2,7 +2,12 @@
  * Typed API Client for FastAPI backend.
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const DEFAULT_PROD_API = 'https://meridian-finance-api.onrender.com';
+const API_BASE = 
+  process.env.NEXT_PUBLIC_API_URL || 
+  (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')
+    ? DEFAULT_PROD_API
+    : 'http://localhost:8000');
 
 export interface FilterParams {
   startDate?: string;
