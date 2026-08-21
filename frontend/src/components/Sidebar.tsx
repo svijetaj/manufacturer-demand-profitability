@@ -13,7 +13,8 @@ import {
   BookOpen, 
   Layers,
   Database,
-  Calculator
+  Calculator,
+  ShieldAlert
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -22,6 +23,7 @@ const NAV_ITEMS = [
   { href: '/margins', label: 'Financial Margins', icon: DollarSign },
   { href: '/opex', label: 'OpEx & Budget', icon: Building2 },
   { href: '/variance', label: 'Variance Explanation', icon: Calculator, badge: '5-Way' },
+  { href: '/anomaly', label: 'Anomaly Detection', icon: ShieldAlert, badge: 'Quality' },
   { href: '/predict-demand', label: 'AI Demand Prediction', icon: Sparkles, badge: 'ML' },
   { href: '/predict-profit', label: 'Profit & CVP Model', icon: TrendingUp, badge: 'Linear' },
   { href: '/docs', label: 'System & RAG Docs', icon: BookOpen },

@@ -75,4 +75,7 @@ export const api = {
   getVariancePeriods: () => fetchApi<any>('/api/variance/periods'),
   getVariance: (periodA?: string, periodB?: string, filters?: FilterParams) => 
     fetchApi<any>(`/api/variance${buildQueryString({ ...filters, period_a: periodA, period_b: periodB })}`),
+  getAnomalySummary: () => fetchApi<any>('/api/anomaly/summary'),
+  getAnomalyItems: (category?: string, severity?: string) => 
+    fetchApi<any>(`/api/anomaly/items${buildQueryString({ category, severity })}`),
 };
